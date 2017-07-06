@@ -6,6 +6,7 @@ releaseVersion=$1
 masterTag=$2
 hasTag=$(git tag -l "$masterTag" | wc -l | tr -d '[:space:]')
 
+
 # Helper function to display text in yellow.
 function log () {
   echo -e "\033[33m"
@@ -47,7 +48,7 @@ fi
 # Are there uncommited changes?
 hasUncommitedChanges=$(git diff)
 if [[ $hasUncommitedChanges ]]; then
-    log "ERR: You have uncommited changes"
+    log "ERR: You have uncommited changes."
     exit 1
 fi
 
