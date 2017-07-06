@@ -1,5 +1,6 @@
 const fs = require('fs')
-const packageJson = require('./package.json')
+const path = require('path')
+const packageJson = require(path.resolve('./package.json'))
 const releaseName = process.argv[2]
 
 if (releaseName) {
