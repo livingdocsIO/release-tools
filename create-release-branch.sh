@@ -65,7 +65,7 @@ if [[ "$masterTag" != "master" ]]; then
     git checkout "$masterTag"
 fi
 git checkout -b "release-$releaseVersion" "$masterTag"
-scriptsDirectory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+scriptsDirectory=$(dirname $(readlink -f $0))
 node $scriptsDirectory/add-release-to-package-json.js $releaseVersion
 
 
