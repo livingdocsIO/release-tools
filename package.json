@@ -1,8 +1,11 @@
 {
-  "name": "release-managers",
+  "name": "@livingdocs/release-tools",
   "version": "1.0.0",
   "description": "CLI tools for handling a release on git/github",
   "main": "index.js",
+  "bin": {
+    "li-release": "./li-release"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
