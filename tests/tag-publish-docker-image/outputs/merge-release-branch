@@ -1,0 +1,5 @@
+docker login -u="dev@li.io" -p="1234567"
+docker tag server:test livingdocs/service-server:hash-rea0a2f
+docker push livingdocs/service-server:hash-rea0a2f
+docker tag server:test livingdocs/service-server:hash-release-7
+docker push livingdocs/service-server:hash-release-7
