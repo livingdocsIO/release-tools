@@ -23,7 +23,7 @@ help () {
 [[ -z "$RANCHER_SERVICE_ID" ]] && help
 [[ -z "$DOCKER_IMAGE_TAG" ]] && help
 
-docker run --rm -it \
+docker run --rm \
   -e RANCHER_URL=$RANCHER_URL \
   -e CATTLE_ACCESS_KEY=$CATTLE_ACCESS_KEY \
   -e CATTLE_SECRET_KEY=$CATTLE_SECRET_KEY \

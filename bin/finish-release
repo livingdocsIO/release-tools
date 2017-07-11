@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 releaseVersion=$1
@@ -58,8 +57,8 @@ git checkout "release-$releaseVersion"
 
 
 log "Update release version in package.json"
-scriptsDirectory=$(dirname $(readlink -f $0))
-node $scriptsDirectory/add-release-to-package-json.js $releaseVersion
+cat package.json | jq ".release=\"$releaseVersion\"" > package.json.tmp
+mv package.json.tmp package.json
 git add package.json
 git diff --quiet --exit-code --cached || git commit -am "Updated version to $releaseVersion"
 

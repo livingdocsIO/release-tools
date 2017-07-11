@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 releaseVersion=$1
@@ -66,8 +65,8 @@ if [[ "$masterTag" != "master" ]]; then
     git checkout "$masterTag"
 fi
 git checkout -b "release-$releaseVersion" "$masterTag"
-scriptsDirectory=$(dirname $(readlink -f $0))
-node $scriptsDirectory/add-release-to-package-json.js $releaseVersion
+cat package.json | jq ".release=\"$releaseVersion\"" > package.json.tmp
+mv package.json.tmp package.json
 
 
 log "Update and push package.json to the release branch release-$releaseVersion"
