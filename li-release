@@ -1,0 +1,31 @@
+#!/bin/bash
+path=$BASH_SOURCE
+ROOT=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$path')))")
+
+help () {
+  >&2 echo "Usage: $0 <command>"
+  >&2 echo ""
+  >&2 echo "  available commands:"
+  >&2 echo "   upgrade-rancher-container:       Upgrade the image of a rancher service"
+  >&2 echo "   create-release-branch:           Create a release branch on github"
+  >&2 echo "   finish-release:                  Finish something"
+  >&2 echo ""
+  exit 1
+}
+
+cmd="$1"
+shift
+case "$cmd" in
+    upgrade-rancher-container)
+        $ROOT/bin/upgrade-rancher-container
+        ;;
+    create-release-branch)
+        $ROOT/bin/create-release-branch
+        ;;
+    finish-release)
+        $ROOT/bin/finish-release
+        ;;
+    *)
+        help
+        ;;
+esac
