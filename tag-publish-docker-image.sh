@@ -42,22 +42,31 @@ prepareTags () {
 hasDockerTags () { [ "x$DOCKER_TAGS" != "x" ]; }
 
 dockerLogin () {
+  echo "  Executing: docker login -u=**** -p=****"
   execute \
     "docker login -u=\"$DOCKER_USERNAME\" -p=\"$DOCKER_PASSWORD\""
 }
 
-dockerTagAndPush () {
-  DOCKER_TAG=$1
-  DOCKER_REMOTE_IMAGE=$DOCKER_SLUG:$DOCKER_TAG
-  execute "docker tag $DOCKER_LOCAL_IMAGE $DOCKER_REMOTE_IMAGE"
-  execute "docker push $DOCKER_REMOTE_IMAGE"
+dockerTag () {
+  DOCKER_REMOTE_IMAGE=$1
+  DOCKER_TAG_COMMAND="docker tag $DOCKER_LOCAL_IMAGE $DOCKER_REMOTE_IMAGE"
+  echo "  Executing: $DOCKER_TAG_COMMAND"
+  execute $DOCKER_TAG_COMMAND
 }
 
+dockerPush () {
+  DOCKER_REMOTE_IMAGE=$1
+  DOCKER_PUSH_COMMAND="docker push $DOCKER_REMOTE_IMAGE"
+  echo "  Executing: $DOCKER_PUSH_COMMAND"
+  execute $DOCKER_PUSH_COMMAND
+}
+
+isInTestMode () { [[ $TEST_MODE == true ]]; }
+isNotInTestMode () { ! isInTestMode; }
+
 execute () {
-  if [[ $TEST_MODE == true ]]; then
-    echo $1
-  else
-    eval $1
+  if isNotInTestMode; then
+    eval $*
   fi
 }
 
@@ -77,21 +86,36 @@ if isAskingHelp || hasNotEnoughArguments || areDockerCredentialsMissing; then
   exit 1
 fi
 
+echo "release-tools: Tagging and pushing Docker images."
+
 prepareTags
 
 if isFeatureBranch; then
+  echo "  Detecting a feature branch."
+  echo "  Tagging two images: hash-tag and feature-tag."
   DOCKER_TAGS="$HASH_TAG $FEATURE_TAG"
 fi
 
 if isMergingOnMaster; then
+  echo "  Detecting a merge to the master branch."
+  echo "  Tagging one image: hash-tag."
   DOCKER_TAGS="$HASH_TAG"
 fi
 
 if isMergingOnRelease; then
+  echo "  Detecting a merge to the release branch."
+  echo "  Tagging two images: hash-tag and release-branch-tag."
   DOCKER_TAGS="$HASH_TAG $RELEASE_BRANCH_TAG"
 fi
 
 if hasDockerTags; then
   dockerLogin
-  for TAG in $DOCKER_TAGS; do dockerTagAndPush $TAG; done
+  for DOCKER_TAG in $DOCKER_TAGS; do
+    DOCKER_REMOTE_IMAGE=$DOCKER_SLUG:$DOCKER_TAG
+
+    dockerTag $DOCKER_REMOTE_IMAGE
+    dockerPush $DOCKER_REMOTE_IMAGE
+  done
+else
+  echo "  No image to tag."
 fi

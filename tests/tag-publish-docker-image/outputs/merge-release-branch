@@ -1,5 +1,8 @@
-docker login -u="dev@li.io" -p="1234567"
-docker tag server:test livingdocs/service-server:hash-rea0a2f
-docker push livingdocs/service-server:hash-rea0a2f
-docker tag server:test livingdocs/service-server:hash-release-7
-docker push livingdocs/service-server:hash-release-7
+release-tools: Tagging and pushing Docker images.
+  Detecting a merge to the release branch.
+  Tagging two images: hash-tag and release-branch-tag.
+  Executing: docker login -u=**** -p=****
+  Executing: docker tag server:test li/service-server:hash-rea0a2f
+  Executing: docker push li/service-server:hash-rea0a2f
+  Executing: docker tag server:test li/service-server:hash-release-7
+  Executing: docker push li/service-server:hash-release-7
