@@ -15,8 +15,7 @@ echo "Testing for missing arguments."
 
 echo "Testing for feature branch."
 ./tag-publish-docker-image.sh \
-  livingdocs \
-  service-server \
+  livingdocs/service-server \
   dev@li.io \
   1234567 \
   server:test \
@@ -28,8 +27,7 @@ echo "Testing for feature branch."
 
 echo "Testing for merging on the master branch."
 ./tag-publish-docker-image.sh \
-  livingdocs \
-  service-server \
+  livingdocs/service-server \
   dev@li.io \
   1234567 \
   server:test \
@@ -41,8 +39,7 @@ echo "Testing for merging on the master branch."
 
 echo "Testing for merging on the release branch."
 ./tag-publish-docker-image.sh \
-  livingdocs \
-  service-server \
+  livingdocs/service-server \
   dev@li.io \
   1234567 \
   server:test \

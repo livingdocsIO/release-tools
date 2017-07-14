@@ -4,18 +4,17 @@ set -e
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HELPERS
 isRequestingHelp () { [[ $1 == --help ]]; }
-hasNotEnoughArguments () { [[ "$#" -lt "8" ]]; }
+hasNotEnoughArguments () { [[ "$#" -lt "7" ]]; }
 displayHelp () {
   echo "This script tags and pushes a local Docker image to the Docker Hub."
-  echo "Argument 1 (MUST)     : <DOCKER_USERNAME>"
-  echo "Argument 2 (MUST)     : <DOCKER_REPOSITORY>"
-  echo "Argument 3 (MUST)     : <DOCKER_LOGIN_USERNAME>"
-  echo "Argument 4 (MUST)     : <DOCKER_LOGIN_PASSWORD>"
-  echo "Argument 5 (MUST)     : <DOCKER_LOCAL_IMAGE>"
-  echo "Argument 6 (MUST)     : <GIT_BRANCH>"
-  echo "Argument 7 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false"
-  echo "Argument 8 (MUST)     : <COMMIT_HASH>"
-  echo "Argument 9            : <TEST_MODE>"
+  echo "Argument 1 (MUST)     : <DOCKER_SLUG> f.e. livingdocs/service-server"
+  echo "Argument 2 (MUST)     : <DOCKER_LOGIN_USERNAME>"
+  echo "Argument 3 (MUST)     : <DOCKER_LOGIN_PASSWORD>"
+  echo "Argument 4 (MUST)     : <DOCKER_LOCAL_IMAGE>"
+  echo "Argument 5 (MUST)     : <GIT_BRANCH>"
+  echo "Argument 6 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false"
+  echo "Argument 7 (MUST)     : <COMMIT_HASH>"
+  echo "Argument 8            : <TEST_MODE>"
 }
 
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
@@ -42,7 +41,7 @@ dockerLogin () {
 
 dockerTagAndPush () {
   DOCKER_TAG=$1
-  DOCKER_REMOTE_IMAGE=$DOCKER_USERNAME/$DOCKER_REPOSITORY:$DOCKER_TAG
+  DOCKER_REMOTE_IMAGE=$DOCKER_SLUG:$DOCKER_TAG
   execute "docker tag $DOCKER_LOCAL_IMAGE $DOCKER_REMOTE_IMAGE"
   execute "docker push $DOCKER_REMOTE_IMAGE"
 }
@@ -56,15 +55,14 @@ execute () {
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ARGUMENTS
-DOCKER_USERNAME=$1
-DOCKER_REPOSITORY=$2
-DOCKER_LOGIN_USERNAME=$3
-DOCKER_LOGIN_PASSWORD=$4
-DOCKER_LOCAL_IMAGE=$5
-GIT_BRANCH=$6
-PULL_REQUEST_NUMBER=$7
-COMMIT_HASH=$8
-TEST_MODE=$9
+DOCKER_SLUG=$1
+DOCKER_LOGIN_USERNAME=$2
+DOCKER_LOGIN_PASSWORD=$3
+DOCKER_LOCAL_IMAGE=$4
+GIT_BRANCH=$5
+PULL_REQUEST_NUMBER=$6
+COMMIT_HASH=$7
+TEST_MODE=$8
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
 SCRIPT_ARGS=$@

@@ -30,8 +30,7 @@ cd release-tools
 #### Execution
 ```bash
 ./tag-publish-docker-image.sh \
-  DOCKER_USERNAME \
-  DOCKER_REPOSITORY \
+  DOCKER_SLUG \
   DOCKER_LOGIN_USERNAME \
   DOCKER_LOGIN_PASSWORD \
   DOCKER_LOCAL_IMAGE \
