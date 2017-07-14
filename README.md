@@ -39,9 +39,9 @@ DOCKER_PASSWORD=<password> \
   COMMIT_HASH
 ```
 
-#### Running the tests
+### Running the tests
 ```bash
-./tests/tag-publish-docker-image/index.sh
+npm test
 ```
 
 ## Copyright
