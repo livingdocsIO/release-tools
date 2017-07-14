@@ -1,23 +1,35 @@
 #!/bin/bash
 
-set -e
+yellowLog () { echo -e "\033[0;93m$*\033[0;0m"; }
+greenLog () { echo -e "\033[0;32m$*\033[0;0m"; }
+redLog () { echo -e "\033[0;31m$*\033[0;0m"; }
+isLastCommandSuccessful () { [[ $1 == 0 ]]; }
+assertTest () {
+  if isLastCommandSuccessful $1; then
+    greenLog "  Success"
+  else
+    redLog "  Fail"
+  fi
+}
 
-echo "Testing for --help argument."
+yellowLog "Testing for --help argument."
 ./tag-publish-docker-image.sh \
   --help \
   | diff - tests/tag-publish-docker-image/outputs/help
+assertTest $?
 
 
-echo "Testing for missing arguments."
+yellowLog "Testing for missing arguments."
 ./tag-publish-docker-image.sh \
   arg1 \
   arg2 \
   arg3 \
   arg4 \
   | diff - tests/tag-publish-docker-image/outputs/help
+assertTest $?
 
 
-echo "Testing for missing Docker credentials as env vars."
+yellowLog "Testing for missing Docker credentials as env vars."
 ./tag-publish-docker-image.sh \
   livingdocs/service-server \
   server:test \
@@ -26,8 +38,9 @@ echo "Testing for missing Docker credentials as env vars."
   fea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/help
+assertTest $?
 
-echo "Testing for missing DOCKER_USERNAME."
+yellowLog "Testing for missing DOCKER_USERNAME."
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
   li/service-server \
@@ -37,8 +50,9 @@ DOCKER_PASSWORD=1234567 \
   fea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/help
+assertTest $?
 
-echo "Testing for missing DOCKER_PASSWORD."
+yellowLog "Testing for missing DOCKER_PASSWORD."
 DOCKER_USERNAME=dev@li.io \
 ./tag-publish-docker-image.sh \
   li/service-server \
@@ -48,9 +62,10 @@ DOCKER_USERNAME=dev@li.io \
   fea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/help
+assertTest $?
 
 
-echo "Testing for a feature branch (PR #42) from the master branch."
+yellowLog "Testing for a feature branch (PR #42) from the master branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
@@ -61,8 +76,9 @@ DOCKER_PASSWORD=1234567 \
   fea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/feature-branch
+assertTest $?
 
-echo "Testing for merging on the master branch."
+yellowLog "Testing for merging on the master branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
@@ -73,8 +89,9 @@ DOCKER_PASSWORD=1234567 \
   ma0a2fd \
   true \
   | diff - tests/tag-publish-docker-image/outputs/merge-master-branch
+assertTest $?
 
-echo "Testing for merging on the release branch."
+yellowLog "Testing for merging on the release branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
@@ -85,8 +102,9 @@ DOCKER_PASSWORD=1234567 \
   rea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/merge-release-branch
+assertTest $?
 
-echo "Testing for a PR #42 from the release branch."
+yellowLog "Testing for a PR #42 from the release branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
@@ -97,8 +115,9 @@ DOCKER_PASSWORD=1234567 \
   rea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+assertTest $?
 
-echo "Testing for merging on a random branch."
+yellowLog "Testing for merging on a random branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
@@ -109,8 +128,9 @@ DOCKER_PASSWORD=1234567 \
   rea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+assertTest $?
 
-echo "Testing for a PR #42 from a random branch."
+yellowLog "Testing for a PR #42 from a random branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
@@ -121,3 +141,4 @@ DOCKER_PASSWORD=1234567 \
   rea0a2f \
   true \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+assertTest $?
