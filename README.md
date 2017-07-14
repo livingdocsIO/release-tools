@@ -14,14 +14,14 @@ cd release-tools
 
 ### Create a release branch
 ```bash
-./create-release-branch.sh \
+./li-release create-release-branch \
   release-version \
   masterTag
 ```
 
 ### Finish release
 ```bash
-./finish-release.sh \
+./li-release finish-release \
   release-version
 ```
 
@@ -31,7 +31,7 @@ cd release-tools
 ```bash
 DOCKER_USERNAME=<username> \
 DOCKER_PASSWORD=<password> \
-./tag-publish-docker-image.sh \
+./li-release tag-publish-docker-image \
   DOCKER_SLUG \
   DOCKER_LOCAL_IMAGE \
   GIT_BRANCH \

@@ -13,14 +13,15 @@ assertTest () {
 }
 
 yellowLog "Testing for --help argument."
-./tag-publish-docker-image.sh \
+pwd
+./bin/tag-publish-docker-image \
   --help \
   | diff - tests/tag-publish-docker-image/outputs/help
 assertTest $?
 
 
 yellowLog "Testing for missing arguments."
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   arg1 \
   arg2 \
   arg3 \
@@ -30,7 +31,7 @@ assertTest $?
 
 
 yellowLog "Testing for missing Docker credentials as env vars."
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   livingdocs/service-server \
   server:test \
   master \
@@ -42,7 +43,7 @@ assertTest $?
 
 yellowLog "Testing for missing DOCKER_USERNAME."
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   master \
@@ -54,7 +55,7 @@ assertTest $?
 
 yellowLog "Testing for missing DOCKER_PASSWORD."
 DOCKER_USERNAME=dev@li.io \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   master \
@@ -68,7 +69,7 @@ assertTest $?
 yellowLog "Testing for a feature branch (PR #42) from the master branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   master \
@@ -81,7 +82,7 @@ assertTest $?
 yellowLog "Testing for merging on the master branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   master \
@@ -94,7 +95,7 @@ assertTest $?
 yellowLog "Testing for merging on the release branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   release-7 \
@@ -107,7 +108,7 @@ assertTest $?
 yellowLog "Testing for a PR #42 from the release branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   release-7 \
@@ -120,7 +121,7 @@ assertTest $?
 yellowLog "Testing for merging on a random branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   random-7 \
@@ -133,7 +134,7 @@ assertTest $?
 yellowLog "Testing for a PR #42 from a random branch."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
-./tag-publish-docker-image.sh \
+./bin/tag-publish-docker-image \
   li/service-server \
   server:test \
   random-7 \
