@@ -12,7 +12,7 @@ help () {
   >&2 echo "   CATTLE_SECRET_KEY:  The Rancher secret-key"
   >&2 echo "   RANCHER_SERVICE_ID: The service id on Rancher which container gets upgraded"
   >&2 echo "   DOCKER_IMAGE_TAG:   The docker image:tag, e.g. livingdocs/service-editor:v1.2.0"
-  >&2 echo "   TIMEOUT:            Timeout in seconds, defaults to 120s"
+  >&2 echo "   TIMEOUT:            Timeout in seconds, defaults to 300s"
   >&2 echo "   "
   exit 1
 }
@@ -27,4 +27,4 @@ docker run --rm \
   -e RANCHER_URL=$RANCHER_URL \
   -e CATTLE_ACCESS_KEY=$CATTLE_ACCESS_KEY \
   -e CATTLE_SECRET_KEY=$CATTLE_SECRET_KEY \
-  etlweather/gaucho upgrade $RANCHER_SERVICE_ID --auto_complete --start_first=true --timeout=${TIMEOUT:-120} --imageUuid=docker:$DOCKER_IMAGE_TAG
+  etlweather/gaucho upgrade $RANCHER_SERVICE_ID --auto_complete --start_first=true --timeout=${TIMEOUT:-300} --imageUuid=docker:$DOCKER_IMAGE_TAG
