@@ -1,9 +1,11 @@
 This script tags and pushes a local Docker image to the Docker Hub.
+# Script's arguments
 Argument 1 (MUST)     : <DOCKER_SLUG> f.e. livingdocs/service-server
-Argument 2 (MUST)     : <DOCKER_LOGIN_USERNAME>
-Argument 3 (MUST)     : <DOCKER_LOGIN_PASSWORD>
-Argument 4 (MUST)     : <DOCKER_LOCAL_IMAGE>
-Argument 5 (MUST)     : <GIT_BRANCH>
-Argument 6 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false
-Argument 7 (MUST)     : <COMMIT_HASH>
-Argument 8            : <TEST_MODE>
+Argument 2 (MUST)     : <DOCKER_LOCAL_IMAGE>
+Argument 3 (MUST)     : <GIT_BRANCH>
+Argument 4 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false
+Argument 5 (MUST)     : <COMMIT_HASH>
+Argument 6 (OPTION)   : <TEST_MODE>
+# Script's environment variables
+Env var (MUST)        : <DOCKER_USERNAME>
+Env var (MUST)        : <DOCKER_PASSWORD>

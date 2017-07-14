@@ -29,10 +29,10 @@ cd release-tools
 
 #### Execution
 ```bash
+DOCKER_USERNAME=<username> \
+DOCKER_PASSWORD=<password> \
 ./tag-publish-docker-image.sh \
   DOCKER_SLUG \
-  DOCKER_LOGIN_USERNAME \
-  DOCKER_LOGIN_PASSWORD \
   DOCKER_LOCAL_IMAGE \
   GIT_BRANCH \
   PULL_REQUEST_NUMBER \

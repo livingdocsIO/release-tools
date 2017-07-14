@@ -11,13 +11,47 @@ echo "Testing for missing arguments."
 ./tag-publish-docker-image.sh \
   arg1 \
   arg2 \
+  arg3 \
+  arg4 \
+  | diff - tests/tag-publish-docker-image/outputs/help
+
+echo "Testing for missing Docker credentials as env vars."
+./tag-publish-docker-image.sh \
+  livingdocs/service-server \
+  server:test \
+  master \
+  42 \
+  fea0a2f \
+  true \
+  | diff - tests/tag-publish-docker-image/outputs/help
+
+echo "Testing for missing DOCKER_USERNAME."
+DOCKER_PASSWORD=1234567 \
+./tag-publish-docker-image.sh \
+  livingdocs/service-server \
+  server:test \
+  master \
+  42 \
+  fea0a2f \
+  true \
+  | diff - tests/tag-publish-docker-image/outputs/help
+
+echo "Testing for missing DOCKER_PASSWORD."
+DOCKER_USERNAME=dev@li.io \
+./tag-publish-docker-image.sh \
+  livingdocs/service-server \
+  server:test \
+  master \
+  42 \
+  fea0a2f \
+  true \
   | diff - tests/tag-publish-docker-image/outputs/help
 
 echo "Testing for feature branch."
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
   livingdocs/service-server \
-  dev@li.io \
-  1234567 \
   server:test \
   master \
   42 \
@@ -26,10 +60,10 @@ echo "Testing for feature branch."
   | diff - tests/tag-publish-docker-image/outputs/feature-branch
 
 echo "Testing for merging on the master branch."
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
   livingdocs/service-server \
-  dev@li.io \
-  1234567 \
   server:test \
   master \
   false \
@@ -38,10 +72,10 @@ echo "Testing for merging on the master branch."
   | diff - tests/tag-publish-docker-image/outputs/merge-master-branch
 
 echo "Testing for merging on the release branch."
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
 ./tag-publish-docker-image.sh \
   livingdocs/service-server \
-  dev@li.io \
-  1234567 \
   server:test \
   release-7 \
   false \

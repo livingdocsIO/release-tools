@@ -3,18 +3,25 @@
 set -e
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HELPERS
-isRequestingHelp () { [[ $1 == --help ]]; }
-hasNotEnoughArguments () { [[ "$#" -lt "7" ]]; }
+isAskingHelp () { [[ $SCRIPT_ARGS == --help ]]; }
+hasNotEnoughArguments () { [[ "$SCRIPT_ARGS_LENGTH" -lt "5" ]]; }
+isMissingDockerUsername () { [[ -z ${DOCKER_USERNAME+x} ]]; }
+isMissingDockerPassword () { [[ -z ${DOCKER_PASSWORD+x} ]]; }
+areDockerCredentialsMissing () {
+  isMissingDockerUsername || isMissingDockerPassword
+}
 displayHelp () {
   echo "This script tags and pushes a local Docker image to the Docker Hub."
+  echo "# Script's arguments"
   echo "Argument 1 (MUST)     : <DOCKER_SLUG> f.e. livingdocs/service-server"
-  echo "Argument 2 (MUST)     : <DOCKER_LOGIN_USERNAME>"
-  echo "Argument 3 (MUST)     : <DOCKER_LOGIN_PASSWORD>"
-  echo "Argument 4 (MUST)     : <DOCKER_LOCAL_IMAGE>"
-  echo "Argument 5 (MUST)     : <GIT_BRANCH>"
-  echo "Argument 6 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false"
-  echo "Argument 7 (MUST)     : <COMMIT_HASH>"
-  echo "Argument 8            : <TEST_MODE>"
+  echo "Argument 2 (MUST)     : <DOCKER_LOCAL_IMAGE>"
+  echo "Argument 3 (MUST)     : <GIT_BRANCH>"
+  echo "Argument 4 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false"
+  echo "Argument 5 (MUST)     : <COMMIT_HASH>"
+  echo "Argument 6 (OPTION)   : <TEST_MODE>"
+  echo "# Script's environment variables"
+  echo "Env var (MUST)        : <DOCKER_USERNAME>"
+  echo "Env var (MUST)        : <DOCKER_PASSWORD>"
 }
 
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
@@ -36,7 +43,7 @@ hasDockerTags () { [ "x$DOCKER_TAGS" != "x" ]; }
 
 dockerLogin () {
   execute \
-    "docker login -u=\"$DOCKER_LOGIN_USERNAME\" -p=\"$DOCKER_LOGIN_PASSWORD\""
+    "docker login -u=\"$DOCKER_USERNAME\" -p=\"$DOCKER_PASSWORD\""
 }
 
 dockerTagAndPush () {
@@ -56,17 +63,16 @@ execute () {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ARGUMENTS
 DOCKER_SLUG=$1
-DOCKER_LOGIN_USERNAME=$2
-DOCKER_LOGIN_PASSWORD=$3
-DOCKER_LOCAL_IMAGE=$4
-GIT_BRANCH=$5
-PULL_REQUEST_NUMBER=$6
-COMMIT_HASH=$7
-TEST_MODE=$8
+DOCKER_LOCAL_IMAGE=$2
+GIT_BRANCH=$3
+PULL_REQUEST_NUMBER=$4
+COMMIT_HASH=$5
+TEST_MODE=$6
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
 SCRIPT_ARGS=$@
-if isRequestingHelp $SCRIPT_ARGS || hasNotEnoughArguments $SCRIPT_ARGS; then
+SCRIPT_ARGS_LENGTH=$#
+if isAskingHelp || hasNotEnoughArguments || areDockerCredentialsMissing; then
   displayHelp
   exit 1
 fi
