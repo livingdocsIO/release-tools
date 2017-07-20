@@ -13,133 +13,85 @@ assertTest () {
 }
 
 yellowLog "Testing for --help argument."
-pwd
 ./bin/tag-publish-docker-image \
   --help \
   | diff - tests/tag-publish-docker-image/outputs/help
 assertTest $?
 
-
-yellowLog "Testing for missing arguments."
-./bin/tag-publish-docker-image \
-  arg1 \
-  arg2 \
-  arg3 \
-  arg4 \
-  | diff - tests/tag-publish-docker-image/outputs/help
-assertTest $?
-
-
-yellowLog "Testing for missing Docker credentials as env vars."
-./bin/tag-publish-docker-image \
-  livingdocs/service-server \
-  server:test \
-  master \
-  42 \
-  fea0a2f \
-  true \
-  | diff - tests/tag-publish-docker-image/outputs/help
-assertTest $?
-
-yellowLog "Testing for missing DOCKER_USERNAME."
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  master \
-  42 \
-  fea0a2f \
-  true \
-  | diff - tests/tag-publish-docker-image/outputs/help
-assertTest $?
-
-yellowLog "Testing for missing DOCKER_PASSWORD."
-DOCKER_USERNAME=dev@li.io \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  master \
-  42 \
-  fea0a2f \
-  true \
-  | diff - tests/tag-publish-docker-image/outputs/help
-assertTest $?
-
-
-yellowLog "Testing for a feature branch (PR #42) from the master branch."
-DOCKER_USERNAME=dev@li.io \
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  master \
-  42 \
-  fea0a2f \
-  true \
+yellowLog "Testing for a feature branch (named myfeat) from the master branch."
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=master \
+pull_request_branch=myfeat \
+commit_hash=fea0a2f \
+git_tag=false \
+./bin/tag-publish-docker-image --test \
   | diff - tests/tag-publish-docker-image/outputs/feature-branch
 assertTest $?
 
 yellowLog "Testing for merging on the master branch."
-DOCKER_USERNAME=dev@li.io \
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  master \
-  false \
-  ma0a2fd \
-  true \
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=master \
+pull_request_branch='' \
+commit_hash=ma0a2fd \
+git_tag=false \
+./bin/tag-publish-docker-image --test \
   | diff - tests/tag-publish-docker-image/outputs/merge-master-branch
 assertTest $?
 
 yellowLog "Testing for merging on the release branch."
-DOCKER_USERNAME=dev@li.io \
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  release-7 \
-  false \
-  rea0a2f \
-  true \
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=release-7 \
+pull_request_branch='' \
+commit_hash=rea0a2f \
+git_tag=v4.2.0 \
+./bin/tag-publish-docker-image --test \
   | diff - tests/tag-publish-docker-image/outputs/merge-release-branch
 assertTest $?
 
-yellowLog "Testing for a PR #42 from the release branch."
-DOCKER_USERNAME=dev@li.io \
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  release-7 \
-  42 \
-  rea0a2f \
-  true \
+yellowLog "Testing for a PR named myfeat from the release branch."
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=release-7 \
+pull_request_branch=myfeat \
+commit_hash=rea0a2f \
+git_tag=false \
+./bin/tag-publish-docker-image --test \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
 
 yellowLog "Testing for merging on a random branch."
-DOCKER_USERNAME=dev@li.io \
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  random-7 \
-  false \
-  rea0a2f \
-  true \
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=random-7 \
+pull_request_branch='' \
+commit_hash=rea0a2f \
+git_tag=false \
+./bin/tag-publish-docker-image --test \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
 
-yellowLog "Testing for a PR #42 from a random branch."
-DOCKER_USERNAME=dev@li.io \
-DOCKER_PASSWORD=1234567 \
-./bin/tag-publish-docker-image \
-  li/service-server \
-  server:test \
-  random-7 \
-  42 \
-  rea0a2f \
-  true \
+yellowLog "Testing for a PR named myfeat from a random branch."
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=random-7 \
+pull_request_branch=myfeat \
+commit_hash=rea0a2f \
+git_tag=false \
+./bin/tag-publish-docker-image --test \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?

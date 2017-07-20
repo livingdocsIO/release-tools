@@ -2,7 +2,7 @@ release-tools: Tagging and pushing Docker images.
   Detecting a feature branch.
   Tagging two images: hash-tag and feature-tag.
   Executing: docker login -u=**** -p=****
-  Executing: docker tag server:test li/service-server:hash-fea0a2f
-  Executing: docker push li/service-server:hash-fea0a2f
-  Executing: docker tag server:test li/service-server:tag-feature-fea0a2f
-  Executing: docker push li/service-server:tag-feature-fea0a2f
+  Executing: docker tag server:test livingdocs/service-server:hash-fea0a2f
+  Executing: docker push livingdocs/service-server:hash-fea0a2f
+  Executing: docker tag server:test livingdocs/service-server:feature-myfeat-hash-fea0a2f
+  Executing: docker push livingdocs/service-server:feature-myfeat-hash-fea0a2f

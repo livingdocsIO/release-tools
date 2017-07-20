@@ -27,16 +27,17 @@ cd release-tools
 
 ### Tag and publish a Docker image
 
-#### Execution
-```bash
-DOCKER_USERNAME=<username> \
-DOCKER_PASSWORD=<password> \
-./li-release tag-publish-docker-image \
-  DOCKER_SLUG \
-  DOCKER_LOCAL_IMAGE \
-  GIT_BRANCH \
-  PULL_REQUEST_NUMBER \
-  COMMIT_HASH
+#### Execution example for a release branch
+```bash  
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch=release-7 \
+pull_request_branch='' \
+commit_hash=rea0a2f \
+git_tag=v4.2.0 \
+./bin/tag-publish-docker-image
 ```
 
 ### Running the tests

@@ -2,5 +2,5 @@ release-tools: Tagging and pushing Docker images.
   Detecting a merge to the master branch.
   Tagging one image: hash-tag.
   Executing: docker login -u=**** -p=****
-  Executing: docker tag server:test li/service-server:hash-ma0a2fd
-  Executing: docker push li/service-server:hash-ma0a2fd
+  Executing: docker tag server:test livingdocs/service-server:hash-ma0a2fd
+  Executing: docker push livingdocs/service-server:hash-ma0a2fd

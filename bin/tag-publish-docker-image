@@ -1,32 +1,29 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HELPERS
 isAskingHelp () { [[ $SCRIPT_ARGS == --help ]]; }
-hasNotEnoughArguments () { [[ "$SCRIPT_ARGS_LENGTH" -lt "5" ]]; }
-isMissingDockerUsername () { [[ -z ${DOCKER_USERNAME+x} ]]; }
-isMissingDockerPassword () { [[ -z ${DOCKER_PASSWORD+x} ]]; }
 areDockerCredentialsMissing () {
   isMissingDockerUsername || isMissingDockerPassword
 }
 displayHelp () {
   echo "This script tags and pushes a local Docker image to the Docker Hub."
-  echo "# Script's arguments"
-  echo "Argument 1 (MUST)     : <DOCKER_SLUG> f.e. livingdocs/service-server"
-  echo "Argument 2 (MUST)     : <DOCKER_LOCAL_IMAGE>"
-  echo "Argument 3 (MUST)     : <GIT_BRANCH>"
-  echo "Argument 4 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false"
-  echo "Argument 5 (MUST)     : <COMMIT_HASH>"
-  echo "Argument 6 (OPTION)   : <TEST_MODE>"
   echo "# Script's environment variables"
   echo "Env var (MUST)        : <DOCKER_USERNAME>"
   echo "Env var (MUST)        : <DOCKER_PASSWORD>"
+  echo "Env var (MUST)        : <REMOTE_IMAGE_NAME> f.e. livingdocs/service-server, the name of the image you want in the Docker Hub without the tag"
+  echo "Env var (MUST)        : <LOCAL_IMAGE_NAME_AND_TAG> local/server:test, the name of a just built local image"
+  echo "Env var (MUST)        : <GIT_BRANCH> Name of the branch except when in presence of a PR, in that case it's the name of the branch targeted by the PR. In travis it's 'TRAVIS_BRANCH'."
+  echo "Env var (MUST)        : <PULL_REQUEST_BRANCH> either the name of the branch if there is a PR or an empty string ''. In Travis it's 'TRAVIS_PULL_REQUEST_BRANCH'"
+  echo "Env var (MUST)        : <COMMIT_HASH> In Travis it's: 'TRAVIS_COMMIT'."
+  echo "Env var (MUST)        : <COMMIT_TAG> f.e. v4.2.0. In Travis it's 'TRAVIS_TAG'."
+  echo "Env var (MUST)        : <TEST_MODE>"
 }
 
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
 isMasterBranch () { [[ $GIT_BRANCH == master ]]; }
-isPullRequest () { [[ $PULL_REQUEST_NUMBER != false ]]; }
+isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
 isNotPullRequest () { ! isPullRequest; }
 
 isFeatureBranch () { isMasterBranch && isPullRequest; }
@@ -35,9 +32,11 @@ isMergingOnRelease () { isReleaseBranch && isNotPullRequest; }
 
 prepareTags () {
   HASH_TAG="hash-$COMMIT_HASH"
-  FEATURE_TAG="tag-feature-$COMMIT_HASH"
-  RELEASE_BRANCH_TAG="hash-$GIT_BRANCH"
+  FEATURE_TAG="feature-$PULL_REQUEST_BRANCH-hash-$COMMIT_HASH"
+  RELEASE_BRANCH_TAG="release-$GIT_BRANCH-tag-$GIT_TAG"
 }
+
+initializeDockerTags () { DOCKER_TAGS=''; }
 
 hasDockerTags () { [ "x$DOCKER_TAGS" != "x" ]; }
 
@@ -49,7 +48,7 @@ dockerLogin () {
 
 dockerTag () {
   DOCKER_REMOTE_IMAGE=$1
-  DOCKER_TAG_COMMAND="docker tag $DOCKER_LOCAL_IMAGE $DOCKER_REMOTE_IMAGE"
+  DOCKER_TAG_COMMAND="docker tag $LOCAL_IMAGE_NAME_AND_TAG $DOCKER_REMOTE_IMAGE"
   echo "  Executing: $DOCKER_TAG_COMMAND"
   execute $DOCKER_TAG_COMMAND
 }
@@ -69,25 +68,31 @@ execute () {
     eval $*
   fi
 }
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ARGUMENTS
-DOCKER_SLUG=$1
-DOCKER_LOCAL_IMAGE=$2
-GIT_BRANCH=$3
-PULL_REQUEST_NUMBER=$4
-COMMIT_HASH=$5
-TEST_MODE=$6
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
 SCRIPT_ARGS=$@
 SCRIPT_ARGS_LENGTH=$#
-if isAskingHelp || hasNotEnoughArguments || areDockerCredentialsMissing; then
+if isAskingHelp; then
   displayHelp
   exit 1
 fi
 
+if [[ $SCRIPT_ARGS == --test ]]; then
+  TEST_MODE=true
+fi
+
+DOCKER_USERNAME=$docker_username
+DOCKER_PASSWORD=$docker_password
+REMOTE_IMAGE_NAME=$remote_image_name
+LOCAL_IMAGE_NAME_AND_TAG=$local_image_name_and_tag
+GIT_BRANCH=$git_branch
+PULL_REQUEST_BRANCH=$pull_request_branch
+COMMIT_HASH=$commit_hash
+GIT_TAG=$git_tag
+
 echo "release-tools: Tagging and pushing Docker images."
 
+initializeDockerTags
 prepareTags
 
 if isFeatureBranch; then
@@ -111,7 +116,7 @@ fi
 if hasDockerTags; then
   dockerLogin
   for DOCKER_TAG in $DOCKER_TAGS; do
-    DOCKER_REMOTE_IMAGE=$DOCKER_SLUG:$DOCKER_TAG
+    DOCKER_REMOTE_IMAGE=$REMOTE_IMAGE_NAME:$DOCKER_TAG
 
     dockerTag $DOCKER_REMOTE_IMAGE
     dockerPush $DOCKER_REMOTE_IMAGE

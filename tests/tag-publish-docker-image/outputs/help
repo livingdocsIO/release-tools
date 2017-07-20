@@ -1,11 +1,11 @@
 This script tags and pushes a local Docker image to the Docker Hub.
-# Script's arguments
-Argument 1 (MUST)     : <DOCKER_SLUG> f.e. livingdocs/service-server
-Argument 2 (MUST)     : <DOCKER_LOCAL_IMAGE>
-Argument 3 (MUST)     : <GIT_BRANCH>
-Argument 4 (MUST)     : <PULL_REQUEST_NUMBER> is a number or false
-Argument 5 (MUST)     : <COMMIT_HASH>
-Argument 6 (OPTION)   : <TEST_MODE>
 # Script's environment variables
 Env var (MUST)        : <DOCKER_USERNAME>
 Env var (MUST)        : <DOCKER_PASSWORD>
+Env var (MUST)        : <REMOTE_IMAGE_NAME> f.e. livingdocs/service-server, the name of the image you want in the Docker Hub without the tag
+Env var (MUST)        : <LOCAL_IMAGE_NAME_AND_TAG> local/server:test, the name of a just built local image
+Env var (MUST)        : <GIT_BRANCH> Name of the branch except when in presence of a PR, in that case it's the name of the branch targeted by the PR. In travis it's 'TRAVIS_BRANCH'.
+Env var (MUST)        : <PULL_REQUEST_BRANCH> either the name of the branch if there is a PR or an empty string ''. In Travis it's 'TRAVIS_PULL_REQUEST_BRANCH'
+Env var (MUST)        : <COMMIT_HASH> In Travis it's: 'TRAVIS_COMMIT'.
+Env var (MUST)        : <COMMIT_TAG> f.e. v4.2.0. In Travis it's 'TRAVIS_TAG'.
+Env var (MUST)        : <TEST_MODE>
