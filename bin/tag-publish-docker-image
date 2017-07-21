@@ -2,7 +2,19 @@
 
 set -eu
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HELPERS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
+SCRIPT_ARGS=$@
+TEST_MODE=false
+DOCKER_USERNAME=$docker_username
+DOCKER_PASSWORD=$docker_password
+REMOTE_IMAGE_NAME=$remote_image_name
+LOCAL_IMAGE_NAME_AND_TAG=$local_image_name_and_tag
+GIT_BRANCH=$git_branch
+PULL_REQUEST_BRANCH=$pull_request_branch
+COMMIT_HASH=$commit_hash
+GIT_TAG=$git_tag
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
 isAskingHelp () { [[ $SCRIPT_ARGS == --help ]]; }
 areDockerCredentialsMissing () {
   isMissingDockerUsername || isMissingDockerPassword
@@ -60,18 +72,17 @@ dockerPush () {
   execute $DOCKER_PUSH_COMMAND
 }
 
-isInTestMode () { [[ $TEST_MODE == true ]]; }
-isNotInTestMode () { ! isInTestMode; }
+isNotInTestMode () { ! [[ $TEST_MODE == true ]]; }
 
 execute () {
   if isNotInTestMode; then
     eval $*
   fi
 }
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ARGUMENTS
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
-SCRIPT_ARGS=$@
-SCRIPT_ARGS_LENGTH=$#
+echo "release-tools: Tagging and pushing Docker images."
+
 if isAskingHelp; then
   displayHelp
   exit 1
@@ -80,17 +91,6 @@ fi
 if [[ $SCRIPT_ARGS == --test ]]; then
   TEST_MODE=true
 fi
-
-DOCKER_USERNAME=$docker_username
-DOCKER_PASSWORD=$docker_password
-REMOTE_IMAGE_NAME=$remote_image_name
-LOCAL_IMAGE_NAME_AND_TAG=$local_image_name_and_tag
-GIT_BRANCH=$git_branch
-PULL_REQUEST_BRANCH=$pull_request_branch
-COMMIT_HASH=$commit_hash
-GIT_TAG=$git_tag
-
-echo "release-tools: Tagging and pushing Docker images."
 
 initializeDockerTags
 prepareTags
