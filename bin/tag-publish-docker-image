@@ -4,6 +4,7 @@ set -eu
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
 SCRIPT_ARGS=$@
+RETURNVALUE=""
 TEST_MODE=false
 DOCKER_USERNAME=$docker_username
 DOCKER_PASSWORD=$docker_password
@@ -20,19 +21,20 @@ areDockerCredentialsMissing () {
   isMissingDockerUsername || isMissingDockerPassword
 }
 displayHelp () {
-  echo "This script tags and pushes a local Docker image to the Docker Hub."
-  echo "# Script's environment variables"
-  echo "Env var (MUST)        : <DOCKER_USERNAME>"
-  echo "Env var (MUST)        : <DOCKER_PASSWORD>"
-  echo "Env var (MUST)        : <REMOTE_IMAGE_NAME> f.e. livingdocs/service-server, the name of the image you want in the Docker Hub without the tag"
-  echo "Env var (MUST)        : <LOCAL_IMAGE_NAME_AND_TAG> local/server:test, the name of a just built local image"
-  echo "Env var (MUST)        : <GIT_BRANCH> Name of the branch except when in presence of a PR, in that case it's the name of the branch targeted by the PR. In travis it's 'TRAVIS_BRANCH'."
-  echo "Env var (MUST)        : <PULL_REQUEST_BRANCH> either the name of the branch if there is a PR or an empty string ''. In Travis it's 'TRAVIS_PULL_REQUEST_BRANCH'"
-  echo "Env var (MUST)        : <COMMIT_HASH> In Travis it's: 'TRAVIS_COMMIT'."
-  echo "Env var (MUST)        : <COMMIT_TAG> f.e. v4.2.0. In Travis it's 'TRAVIS_TAG'."
-  echo "Env var (MUST)        : <TEST_MODE>"
+  log "This script tags and pushes a local Docker image to the Docker Hub."
+  log "# Script's environment variables"
+  log "Env var (MUST)        : <DOCKER_USERNAME>"
+  log "Env var (MUST)        : <DOCKER_PASSWORD>"
+  log "Env var (MUST)        : <REMOTE_IMAGE_NAME> f.e. livingdocs/service-server, the name of the image you want in the Docker Hub without the tag"
+  log "Env var (MUST)        : <LOCAL_IMAGE_NAME_AND_TAG> local/server:test, the name of a just built local image"
+  log "Env var (MUST)        : <GIT_BRANCH> Name of the branch except when in presence of a PR, in that case it's the name of the branch targeted by the PR. In travis it's 'TRAVIS_BRANCH'."
+  log "Env var (MUST)        : <PULL_REQUEST_BRANCH> either the name of the branch if there is a PR or an empty string ''. In Travis it's 'TRAVIS_PULL_REQUEST_BRANCH'"
+  log "Env var (MUST)        : <COMMIT_HASH> In Travis it's: 'TRAVIS_COMMIT'."
+  log "Env var (MUST)        : <COMMIT_TAG> f.e. v4.2.0. In Travis it's 'TRAVIS_TAG'."
+  log "Env var (MUST)        : <TEST_MODE>"
 }
 
+log() { echo "$@" 1>&2; }
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
 isMasterBranch () { [[ $GIT_BRANCH == master ]]; }
 isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
@@ -53,7 +55,7 @@ initializeDockerTags () { DOCKER_TAGS=''; }
 hasDockerTags () { [ "x$DOCKER_TAGS" != "x" ]; }
 
 dockerLogin () {
-  echo "  Executing: docker login -u=**** -p=****"
+  log "  Executing: docker login -u=**** -p=****"
   execute \
     "docker login -u=\"$DOCKER_USERNAME\" -p=\"$DOCKER_PASSWORD\""
 }
@@ -61,14 +63,14 @@ dockerLogin () {
 dockerTag () {
   DOCKER_REMOTE_IMAGE=$1
   DOCKER_TAG_COMMAND="docker tag $LOCAL_IMAGE_NAME_AND_TAG $DOCKER_REMOTE_IMAGE"
-  echo "  Executing: $DOCKER_TAG_COMMAND"
+  log "  Executing: $DOCKER_TAG_COMMAND"
   execute $DOCKER_TAG_COMMAND
 }
 
 dockerPush () {
   DOCKER_REMOTE_IMAGE=$1
   DOCKER_PUSH_COMMAND="docker push $DOCKER_REMOTE_IMAGE"
-  echo "  Executing: $DOCKER_PUSH_COMMAND"
+  log "  Executing: $DOCKER_PUSH_COMMAND"
   execute $DOCKER_PUSH_COMMAND
 }
 
@@ -81,7 +83,7 @@ execute () {
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
-echo "release-tools: Tagging and pushing Docker images."
+log "release-tools: Tagging and pushing Docker images."
 
 if isAskingHelp; then
   displayHelp
@@ -96,21 +98,24 @@ initializeDockerTags
 prepareTags
 
 if isFeatureBranch; then
-  echo "  Detecting a feature branch."
-  echo "  Tagging two images: hash-tag and feature-tag."
+  log "  Detecting a feature branch."
+  log "  Tagging two images: hash-tag and feature-tag."
   DOCKER_TAGS="$HASH_TAG $FEATURE_TAG"
+  RETURNVALUE="$FEATURE_TAG"
 fi
 
 if isMergingOnMaster; then
-  echo "  Detecting a merge to the master branch."
-  echo "  Tagging one image: hash-tag."
+  log "  Detecting a merge to the master branch."
+  log "  Tagging one image: hash-tag."
   DOCKER_TAGS="$HASH_TAG"
+  RETURNVALUE="$HASH_TAG"
 fi
 
 if isMergingOnRelease; then
-  echo "  Detecting a merge to the release branch."
-  echo "  Tagging two images: hash-tag and release-branch-tag."
+  log "  Detecting a merge to the release branch."
+  log "  Tagging two images: hash-tag and release-branch-tag."
   DOCKER_TAGS="$HASH_TAG $RELEASE_BRANCH_TAG"
+  RETURNVALUE="$RELEASE_BRANCH_TAG"
 fi
 
 if hasDockerTags; then
@@ -122,5 +127,8 @@ if hasDockerTags; then
     dockerPush $DOCKER_REMOTE_IMAGE
   done
 else
-  echo "  No image to tag."
+  log "  No image to tag."
 fi
+
+# use the return value in stdout 
+echo $RETURNVALUE
