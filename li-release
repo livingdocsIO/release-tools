@@ -9,7 +9,8 @@ help () {
   >&2 echo "   upgrade-rancher-container:       Upgrade the image of a rancher service"
   >&2 echo "   create-release-branch:           Create a release branch on github"
   >&2 echo "   finish-release:                  Finish something"
-  >&2 echo "   tag-publish-docker-image:        Tag and publish Docker images"
+  >&2 echo "   tag-publish-docker-image:        Tag and publish docker images"
+  >&2 echo "   tag-and-deploy-docker-image:     Tag and deploy docker images"
   >&2 echo ""
   exit 1
 }
@@ -28,6 +29,9 @@ case "$cmd" in
         ;;
     tag-publish-docker-image)
         $ROOT/bin/tag-publish-docker-image $*
+        ;;
+    tag-and-deploy-docker-image)
+        $ROOT/bin/tag-and-deploy-docker-image $*
         ;;
     *)
         help

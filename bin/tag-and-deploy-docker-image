@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# You need to set the following variables in the Travis-GUI:
+# DOCKER_USERNAME:                 The username on Dockerhub
+# DOCKER_PASSWORD:                 The password on Dockerhub
+#
+# You need to set the following variables (here or the main script):
+# REMOTE_IMAGE_NAME:               Docker image name on Dockerhub
+# LOCAL_IMAGE_NAME_AND_TAG:        Local docker image name used for as base for tagging
+# RELEASE_SERVER_SERVICE_HANDLE:   Service handle of livingdocs/release-server
+
+
+deploy_to_rancher () {
+  curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" https://releases.livingdocs.io/deploy;
+}
+
+if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
+  # master branch deployment to develop
+  if [[ $TRAVIS_BRANCH == master ]]; then
+    # build docker image tags
+    dockerImageTag=$(docker_username=$DOCKER_USERNAME \
+    docker_password=$DOCKER_PASSWORD \
+    remote_image_name=$REMOTE_IMAGE_NAME \
+    local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
+    git_branch=master \
+    pull_request_branch='' \
+    commit_hash=$TRAVIS_COMMIT \
+    git_tag=false \
+    ./node_modules/@livingdocs/release-tools/li-release tag-publish-docker-image)
+
+    deploy_to_rancher $dockerImageTag
+  fi
+
+  # release-<x> branch with a tag deployment to staging
+  if [[ $TRAVIS_BRANCH =~ ^release- ]] && [ -n "$TRAVIS_TAG" ]; then
+    # build docker image tags
+    dockerImageTag=$(docker_username=$DOCKER_USERNAME \
+    docker_password=$DOCKER_PASSWORD \
+    remote_image_name=$REMOTE_IMAGE_NAME \
+    local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
+    git_branch=$TRAVIS_BRANCH \
+    pull_request_branch='' \
+    commit_hash=$TRAVIS_COMMIT \
+    git_tag=$TRAVIS_TAG \
+    ./node_modules/@livingdocs/release-tools/li-release tag-publish-docker-image)
+
+    deploy_to_rancher $dockerImageTag
+  fi
+fi
