@@ -14,6 +14,8 @@ deploy_to_rancher () {
   curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" https://releases.livingdocs.io/deploy;
 }
 
+pwd
+
 if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
   # master branch deployment to develop
   if [[ $TRAVIS_BRANCH == master ]]; then
@@ -26,7 +28,7 @@ if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
     pull_request_branch='' \
     commit_hash=$TRAVIS_COMMIT \
     git_tag=false \
-    ./node_modules/@livingdocs/release-tools/li-release tag-publish-docker-image)
+    ./li-release tag-publish-docker-image)
 
     deploy_to_rancher $dockerImageTag
   fi
@@ -42,7 +44,7 @@ if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
     pull_request_branch='' \
     commit_hash=$TRAVIS_COMMIT \
     git_tag=$TRAVIS_TAG \
-    ./node_modules/@livingdocs/release-tools/li-release tag-publish-docker-image)
+    ./li-release tag-publish-docker-image)
 
     deploy_to_rancher $dockerImageTag
   fi
