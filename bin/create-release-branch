@@ -8,9 +8,9 @@ hasTag=$(git tag -l "$masterTag" | wc -l | tr -d '[:space:]')
 
 # Helper function to display text in yellow.
 function log () {
-  echo -e "\033[33m"
-  echo "$1"
-  echo -e "\033[0m"
+  echo -e "\033[33m" 1>&2;
+  echo "$1" 1>&2;
+  echo -e "\033[0m" 1>&2;
 }
 
 
