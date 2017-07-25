@@ -2,25 +2,11 @@
 
 set -eu
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
-SCRIPT_ARGS=$@
-RETURNVALUE=""
-TEST_MODE=false
-DOCKER_USERNAME=$docker_username
-DOCKER_PASSWORD=$docker_password
-REMOTE_IMAGE_NAME=$remote_image_name
-LOCAL_IMAGE_NAME_AND_TAG=$local_image_name_and_tag
-GIT_BRANCH=$git_branch
-PULL_REQUEST_BRANCH=$pull_request_branch
-COMMIT_HASH=$commit_hash
-GIT_TAG=$git_tag
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HELP
+log() { echo "$@" 1>&2; }
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
-isAskingHelp () { [[ $SCRIPT_ARGS == --help ]]; }
-areDockerCredentialsMissing () {
-  isMissingDockerUsername || isMissingDockerPassword
-}
-displayHelp () {
+# show help if --help is passed as parameter
+if [[ $@ == --help ]]; then
   log "This script tags and pushes a local Docker image to the Docker Hub."
   log "# Script's environment variables"
   log "Env var (MUST)        : <DOCKER_USERNAME>"
@@ -32,9 +18,14 @@ displayHelp () {
   log "Env var (MUST)        : <COMMIT_HASH> In Travis it's: 'TRAVIS_COMMIT'."
   log "Env var (MUST)        : <COMMIT_TAG> f.e. v4.2.0. In Travis it's 'TRAVIS_TAG'."
   log "Env var (MUST)        : <TEST_MODE>"
+  exit 1
+fi
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
+areDockerCredentialsMissing () {
+  isMissingDockerUsername || isMissingDockerPassword
 }
 
-log() { echo "$@" 1>&2; }
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
 isMasterBranch () { [[ $GIT_BRANCH == master ]]; }
 isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
@@ -82,15 +73,22 @@ execute () {
   fi
 }
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
+RETURNVALUE=""
+TEST_MODE=false
+DOCKER_USERNAME=${docker_username:-''}
+DOCKER_PASSWORD=${docker_password:-''}
+REMOTE_IMAGE_NAME=${remote_image_name:-''}
+LOCAL_IMAGE_NAME_AND_TAG=${local_image_name_and_tag:-''}
+GIT_BRANCH=${git_branch:-''}
+PULL_REQUEST_BRANCH=${pull_request_branch:-''}
+COMMIT_HASH=${commit_hash:-''}
+GIT_TAG=${git_tag:-''}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
 log "release-tools: Tagging and pushing Docker images."
 
-if isAskingHelp; then
-  displayHelp
-  exit 1
-fi
-
-if [[ $SCRIPT_ARGS == --test ]]; then
+if [[ $@ == --test ]]; then
   TEST_MODE=true
 fi
 
@@ -127,7 +125,7 @@ if hasDockerTags; then
     dockerPush $DOCKER_REMOTE_IMAGE
   done
 else
-  log "  No image to tag."
+  log "  No tagging case has occurred. Abort operation."
 fi
 
 # use the return value in stdout
