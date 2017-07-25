@@ -9,17 +9,25 @@
 # LOCAL_IMAGE_NAME_AND_TAG:        Local docker image name used for as base for tagging
 # RELEASE_SERVER_SERVICE_HANDLE:   Service handle of livingdocs/release-server
 
-currentDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+log () {
+  echo "$1" 1>&2;
+}
 
 deploy_to_rancher () {
   curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" https://releases.livingdocs.io/deploy;
 }
+
+log "execute: tag-and-deploy-docker-image"
+
+currentDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+log "current directory: $currentDir"
 
 
 if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
   # master branch deployment to develop
   if [[ $TRAVIS_BRANCH == master ]]; then
     # build docker image tags
+    log "publish and deploy docker image based on branch: $TRAVIS_BRANCH"
     dockerImageTag=$(docker_username=$DOCKER_USERNAME \
     docker_password=$DOCKER_PASSWORD \
     remote_image_name=$REMOTE_IMAGE_NAME \
@@ -35,6 +43,7 @@ if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
 
   # release-<x> branch with a tag deployment to staging
   if [[ $TRAVIS_BRANCH =~ ^release- ]] && [ -n "$TRAVIS_TAG" ]; then
+    log "publish and deploy docker image based on branch: $TRAVIS_BRANCH"
     # build docker image tags
     dockerImageTag=$(docker_username=$DOCKER_USERNAME \
     docker_password=$DOCKER_PASSWORD \
