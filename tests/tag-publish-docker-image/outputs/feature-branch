@@ -6,3 +6,4 @@ release-tools: Tagging and pushing Docker images.
   Executing: docker push livingdocs/service-server:hash-fea0a2f
   Executing: docker tag server:test livingdocs/service-server:feature-myfeat-hash-fea0a2f
   Executing: docker push livingdocs/service-server:feature-myfeat-hash-fea0a2f
+feature-myfeat-hash-fea0a2f

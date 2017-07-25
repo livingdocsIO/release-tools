@@ -4,3 +4,4 @@ release-tools: Tagging and pushing Docker images.
   Executing: docker login -u=**** -p=****
   Executing: docker tag server:test livingdocs/service-server:hash-ma0a2fd
   Executing: docker push livingdocs/service-server:hash-ma0a2fd
+hash-ma0a2fd
