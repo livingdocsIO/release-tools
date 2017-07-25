@@ -41,5 +41,10 @@ commit_hash=${TRAVIS_COMMIT:-${COMMIT_HASH}} \
 git_tag=${TRAVIS_TAG:-${GIT_TAG}} \
 $currentDir/tag-publish-docker-image)
 
+if [ -z "$dockerImageTag" ]; then
+  log "Error: There was an error during image tagging. No docker image tag has been set."
+  exit 1
+fi
+
 # deploy to release-server -> rancher
 deploy_to_rancher $dockerImageTag
