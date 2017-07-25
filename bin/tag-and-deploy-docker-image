@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 
-# You need to set the following variables in the Travis-GUI:
+# You MUST set the following variables in the Travis-GUI:
 # DOCKER_USERNAME:                 The username on Dockerhub
 # DOCKER_PASSWORD:                 The password on Dockerhub
 #
-# You need to set the following variables (here or the main script):
+# You MUST set the following variables (here or in the main script):
 # REMOTE_IMAGE_NAME:               Docker image name on Dockerhub
 # LOCAL_IMAGE_NAME_AND_TAG:        Local docker image name used for as base for tagging
 # RELEASE_SERVER_SERVICE_HANDLE:   Service handle of livingdocs/release-server
+#
+# You COULD set the following variables (here or in the main script)
+# Based on the set variables the script decides how to tag images
+# If you use Travis, you don't have to set this variables
+# GIT_BRANCH:                      Name of the branch
+# PULL_REQUEST_BRANCH              Pull request number
+# COMMIT_HASH                      Commit Hash
+# GIT_TAG                          Tag
 
 log () {
   echo "$1" 1>&2;
@@ -22,39 +30,16 @@ log "execute: tag-and-deploy-docker-image"
 currentDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 log "current directory: $currentDir"
 
+# build docker image tags
+dockerImageTag=$(docker_username=$DOCKER_USERNAME \
+docker_password=$DOCKER_PASSWORD \
+remote_image_name=$REMOTE_IMAGE_NAME \
+local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
+git_branch=${TRAVIS_BRANCH:-${GIT_BRANCH}} \
+pull_request_branch=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_BRANCH}} \
+commit_hash=${TRAVIS_COMMIT:-${COMMIT_HASH}} \
+git_tag=${TRAVIS_TAG:-${GIT_TAG}} \
+$currentDir/tag-publish-docker-image)
 
-if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
-  # master branch deployment to develop
-  if [[ $TRAVIS_BRANCH == master ]]; then
-    # build docker image tags
-    log "publish and deploy docker image based on branch: $TRAVIS_BRANCH"
-    dockerImageTag=$(docker_username=$DOCKER_USERNAME \
-    docker_password=$DOCKER_PASSWORD \
-    remote_image_name=$REMOTE_IMAGE_NAME \
-    local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
-    git_branch=master \
-    pull_request_branch='' \
-    commit_hash=$TRAVIS_COMMIT \
-    git_tag=false \
-    $currentDir/tag-publish-docker-image)
-
-    deploy_to_rancher $dockerImageTag
-  fi
-
-  # release-<x> branch with a tag deployment to staging
-  if [[ $TRAVIS_BRANCH =~ ^release- ]] && [ -n "$TRAVIS_TAG" ]; then
-    log "publish and deploy docker image based on branch: $TRAVIS_BRANCH"
-    # build docker image tags
-    dockerImageTag=$(docker_username=$DOCKER_USERNAME \
-    docker_password=$DOCKER_PASSWORD \
-    remote_image_name=$REMOTE_IMAGE_NAME \
-    local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
-    git_branch=$TRAVIS_BRANCH \
-    pull_request_branch='' \
-    commit_hash=$TRAVIS_COMMIT \
-    git_tag=$TRAVIS_TAG \
-    $currentDir/tag-publish-docker-image)
-
-    deploy_to_rancher $dockerImageTag
-  fi
-fi
+# deploy to release-server -> rancher
+deploy_to_rancher $dockerImageTag
