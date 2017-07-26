@@ -1,44 +1,36 @@
 #!/usr/bin/env bash
-
-# You MUST set the following variables in the Travis-GUI:
-# DOCKER_USERNAME:                 The username on Dockerhub
-# DOCKER_PASSWORD:                 The password on Dockerhub
-#
-# You MUST set the following variables (here or in the main script):
-# REMOTE_IMAGE_NAME:               Docker image name on Dockerhub
-# LOCAL_IMAGE_NAME_AND_TAG:        Local docker image name used for as base for tagging
-# RELEASE_SERVER_SERVICE_HANDLE:   Service handle of livingdocs/release-server
-#
-# You COULD set the following variables (here or in the main script)
-# Based on the set variables the script decides how to tag images
-# If you use Travis, you don't have to set this variables
-# GIT_BRANCH:                      Name of the branch
-# PULL_REQUEST_BRANCH              Pull request branch name
-# COMMIT_HASH                      Commit Hash
-# COMMIT_TAG                          Tag
+set -e
 
 log () {
   echo "$1" 1>&2;
+}
+
+help () {
+  log "You MUST defined the following environment variables:"
+  log ""
+  log "<RELEASE_SERVER_SERVICE_HANDLE>   Service handle of livingdocs/release-server"
+  exit 1
 }
 
 deploy_to_rancher () {
   curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" https://releases.livingdocs.io/deploy;
 }
 
-log "execute: tag-and-deploy-docker-image"
+# Mandatory environment variables
+[[ -z "$RELEASE_SERVER_SERVICE_HANDLE" ]] && help
 
-currentDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-log "current directory: $currentDir"
+log "execute script: tag-and-deploy-docker-image"
 
 # build docker image tags
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
 dockerImageTag=$(docker_username=$DOCKER_USERNAME \
 docker_password=$DOCKER_PASSWORD \
 remote_image_name=$REMOTE_IMAGE_NAME \
 local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
-git_branch=${TRAVIS_BRANCH:-${GIT_BRANCH}} \
-pull_request_branch=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_BRANCH}} \
-commit_hash=${TRAVIS_COMMIT:-${COMMIT_HASH}} \
-commit_tag=${TRAVIS_TAG:-${COMMIT_TAG}} \
+branch_name=${TRAVIS_BRANCH:-${BRANCH_NAME:-''}} \
+pull_request_number=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_NUMBER:-''}} \
+commit_sha=${TRAVIS_COMMIT:-${COMMIT_SHA:-''}} \
+commit_tag=${TRAVIS_TAG:-${COMMIT_TAG:-''}} \
 $currentDir/tag-publish-docker-image)
 
 if [ -z "$dockerImageTag" ]; then

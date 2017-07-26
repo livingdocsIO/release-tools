@@ -1,6 +1,6 @@
 release-tools: Tagging and pushing Docker images.
-  Add tags (hash-tag) Add hash-tag to docker image based on the master branch.
+  Add tags (sha-tag) Add sha-tag to docker image based on the master branch.
   Executing: docker login -u=**** -p=****
-  Executing: docker tag server:test livingdocs/service-server:hash-ma0a2fd
-  Executing: docker push livingdocs/service-server:hash-ma0a2fd
-hash-ma0a2fd
+  Executing: docker tag server:test livingdocs/service-server:sha-ma0a2fd
+  Executing: docker push livingdocs/service-server:sha-ma0a2fd
+sha-ma0a2fd

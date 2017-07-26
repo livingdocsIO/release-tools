@@ -33,9 +33,9 @@ docker_username=dev@li.io \
 docker_password=1234567 \
 remote_image_name=livingdocs/service-server \
 local_image_name_and_tag=server:test \
-git_branch=release-7 \
-pull_request_branch='' \
-commit_hash=rea0a2f \
+branch_name=release-7 \
+pull_request_number='' \
+commit_sha=rea0a2f \
 git_tag=v4.2.0 \
 ./bin/tag-publish-docker-image
 ```

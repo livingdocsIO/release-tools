@@ -79,4 +79,4 @@ log "Delete the local release branch release-$releaseVersion"
 git checkout master
 git branch -D "release-$releaseVersion"
 
-log "create-release-branch.sh has been executed successfully"
+log "init-release has been executed successfully"

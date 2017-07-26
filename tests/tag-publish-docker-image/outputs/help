@@ -1,11 +1,18 @@
 This script tags and pushes a local Docker image to the Docker Hub.
-# Script's environment variables
-Env var (MUST)        : <DOCKER_USERNAME>
-Env var (MUST)        : <DOCKER_PASSWORD>
-Env var (MUST)        : <REMOTE_IMAGE_NAME> f.e. livingdocs/service-server, the name of the image you want in the Docker Hub without the tag
-Env var (MUST)        : <LOCAL_IMAGE_NAME_AND_TAG> local/server:test, the name of a just built local image
-Env var (MUST)        : <GIT_BRANCH> Name of the branch except when in presence of a PR, in that case it's the name of the branch targeted by the PR. In travis it's 'TRAVIS_BRANCH'.
-Env var (MUST)        : <PULL_REQUEST_BRANCH> either the name of the branch if there is a PR or an empty string ''. In Travis it's 'TRAVIS_PULL_REQUEST'
-Env var (MUST)        : <COMMIT_HASH> In Travis it's: 'TRAVIS_COMMIT'.
-Env var (MUST)        : <COMMIT_TAG> f.e. v4.2.0. In Travis it's 'TRAVIS_TAG'.
-Env var (MUST)        : <TEST_MODE>
+
+---------------------------------------
+You MUST define the following variables
+---------------------------------------
+<DOCKER_USERNAME>                                                The username on Dockerhub
+<DOCKER_PASSWORD>                                                The password on Dockerhub
+<REMOTE_IMAGE_NAME>        example: 'livingdocs/service-server'. The docker image name on Docker Hub without tag
+<LOCAL_IMAGE_NAME_AND_TAG> example: 'local/server:test'.         The docker image name of a local docker image
+
+------------------------------------------------------------------------------------------------------
+This environment variables are optional. Based on this variables the script decides how to tag images.
+------------------------------------------------------------------------------------------------------
+<PULL_REQUEST_NUMBER>      example: '77' or ''
+<BRANCH_NAME>              example: 'my-branch'                  Branch name or referenced branch name of a pull request
+<COMMIT_SHA>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'
+<COMMIT_TAG>               example: 'v4.2.0'
+<TEST_MODE>                                                      In test mode nothing gets executed, you see only log messages

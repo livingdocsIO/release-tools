@@ -46,7 +46,7 @@ fi
 remoteBranchExists=$(git branch -r | { grep "release-$releaseVersion\$" || true; })
 if [ "x$remoteBranchExists" = "x" ]; then
   log "ERR: There is no remote branch release-$releaseVersion.
-    Please execute the create-release-branch.sh first"
+    Please execute 'init-release' first"
   exit 1
 fi
 

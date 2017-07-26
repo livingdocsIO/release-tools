@@ -1,3 +1,3 @@
 release-tools: Tagging and pushing Docker images.
-  No tagging case has occurred. Abort operation.
+  No tagging scenario has been applied based on the passed arguments. Abort operation.
 
