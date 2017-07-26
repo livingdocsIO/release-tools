@@ -3,16 +3,16 @@ This script tags and pushes a local Docker image to the Docker Hub.
 ---------------------------------------
 You MUST define the following variables
 ---------------------------------------
-<DOCKER_USERNAME>                                                The username on Dockerhub
-<DOCKER_PASSWORD>                                                The password on Dockerhub
-<REMOTE_IMAGE_NAME>        example: 'livingdocs/service-server'. The docker image name on Docker Hub without tag
-<LOCAL_IMAGE_NAME_AND_TAG> example: 'local/server:test'.         The docker image name of a local docker image
+<docker_username>                                                The username on Dockerhub
+<docker_password>                                                The password on Dockerhub
+<remote_image_name>        example: 'livingdocs/service-server'. The docker image name on Docker Hub without tag
+<local_image_name_and_tag> example: 'local/server:test'.         The docker image name of a local docker image
 
 ------------------------------------------------------------------------------------------------------
 This environment variables are optional. Based on this variables the script decides how to tag images.
 ------------------------------------------------------------------------------------------------------
-<PULL_REQUEST_NUMBER>      example: '77' or ''
-<BRANCH_NAME>              example: 'my-branch'                  Branch name or referenced branch name of a pull request
-<COMMIT_SHA>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'
-<COMMIT_TAG>               example: 'v4.2.0'
-<TEST_MODE>                                                      In test mode nothing gets executed, you see only log messages
+<pull_request_number>      example: '77' or ''
+<branch_name>              example: 'my-branch'                  Branch name or referenced branch name of a pull request
+<commit_sha>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'
+<commit_tag>               example: 'v4.2.0'
+--test                                                           In test mode nothing gets executed, you see only log messages
