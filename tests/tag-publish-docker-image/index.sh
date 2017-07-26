@@ -41,7 +41,7 @@ pull_request_branch='' \
 commit_hash=ma0a2fd \
 commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/merge-master-branch
+  | diff - tests/tag-publish-docker-image/outputs/master-branch
 assertTest $?
 
 yellowLog "Testing for merging on the release branch."
@@ -54,7 +54,7 @@ pull_request_branch='' \
 commit_hash=rea0a2f \
 commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/merge-release-branch
+  | diff - tests/tag-publish-docker-image/outputs/release-branch
 assertTest $?
 
 yellowLog "Testing for merging on a tag."
@@ -67,7 +67,7 @@ pull_request_branch='' \
 commit_hash=rea0a2f \
 commit_tag=v4.2.0 \
 ./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/merge-release-tag
+  | diff - tests/tag-publish-docker-image/outputs/tag
 assertTest $?
 
 yellowLog "Testing for a PR named myfeat from the release branch."

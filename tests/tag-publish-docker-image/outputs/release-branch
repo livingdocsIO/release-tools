@@ -1,6 +1,5 @@
 release-tools: Tagging and pushing Docker images.
-  Detecting a merge to the release branch.
-  Tagging two images: hash-tag and release-branch-tag.
+  Add tags (hash-tag / release-branch-tag) to docker image based on a release branch.
   Executing: docker login -u=**** -p=****
   Executing: docker tag server:test livingdocs/service-server:hash-rea0a2f
   Executing: docker push livingdocs/service-server:hash-rea0a2f

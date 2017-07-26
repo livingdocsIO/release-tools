@@ -1,6 +1,5 @@
 release-tools: Tagging and pushing Docker images.
-  Detecting a tag.
-  Tagging two images: hash-tag and tag-tag.
+  Add tags (hash-tag / tag) to docker image based on a tag.
   Executing: docker login -u=**** -p=****
   Executing: docker tag server:test livingdocs/service-server:hash-rea0a2f
   Executing: docker push livingdocs/service-server:hash-rea0a2f

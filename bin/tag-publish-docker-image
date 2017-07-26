@@ -22,19 +22,12 @@ if [[ $@ == --help ]]; then
 fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
-areDockerCredentialsMissing () {
-  isMissingDockerUsername || isMissingDockerPassword
-}
-
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
 isMasterBranch () { [[ $GIT_BRANCH == master ]]; }
-isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
-hasTag () { [[ -n $COMMIT_TAG ]]; }
-isNotPullRequest () { ! isPullRequest; }
-
 isFeatureBranch () { isMasterBranch && isPullRequest; }
-isMergingOnMaster () { isMasterBranch && isNotPullRequest; }
-isMergingOnRelease () { isReleaseBranch && isNotPullRequest; }
+isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
+isNotPullRequest () { ! isPullRequest; }
+hasTag () { [[ -n $COMMIT_TAG ]]; }
 
 prepareTags () {
   HASH_TAG="hash-$COMMIT_HASH"
@@ -42,8 +35,6 @@ prepareTags () {
   RELEASE_BRANCH_TAG="branch-$GIT_BRANCH-hash-$COMMIT_HASH"
   TAG_TAG="tag-$COMMIT_TAG"
 }
-
-initializeDockerTags () { DOCKER_TAGS=''; }
 
 hasDockerTags () { [ "x$DOCKER_TAGS" != "x" ]; }
 
@@ -86,6 +77,7 @@ GIT_BRANCH=${git_branch:-''}
 PULL_REQUEST_BRANCH=${pull_request_branch:-''}
 COMMIT_HASH=${commit_hash:-''}
 COMMIT_TAG=${commit_tag:-''}
+DOCKER_TAGS=''
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
 log "release-tools: Tagging and pushing Docker images."
@@ -94,33 +86,28 @@ if [[ $@ == --test ]]; then
   TEST_MODE=true
 fi
 
-initializeDockerTags
 prepareTags
 
 if isFeatureBranch; then
-  log "  Detecting a feature branch."
-  log "  Tagging two images: hash-tag and feature-tag."
+  log "  Add tags (hash-tag / feature-tag) to docker image based on a feature branch."
   DOCKER_TAGS="$HASH_TAG $FEATURE_TAG"
   RETURNVALUE="$FEATURE_TAG"
 fi
 
-if isMergingOnMaster; then
-  log "  Detecting a merge to the master branch."
-  log "  Tagging one image: hash-tag."
+if isMasterBranch && isNotPullRequest; then
+  log "  Add tags (hash-tag) Add hash-tag to docker image based on the master branch."
   DOCKER_TAGS="$HASH_TAG"
   RETURNVALUE="$HASH_TAG"
 fi
 
-if isMergingOnRelease; then
-  log "  Detecting a merge to the release branch."
-  log "  Tagging two images: hash-tag and release-branch-tag."
+if isReleaseBranch && isNotPullRequest; then
+  log "  Add tags (hash-tag / release-branch-tag) to docker image based on a release branch."
   DOCKER_TAGS="$HASH_TAG $RELEASE_BRANCH_TAG"
   RETURNVALUE="$RELEASE_BRANCH_TAG"
 fi
 
 if hasTag; then
-  log "  Detecting a tag."
-  log "  Tagging two images: hash-tag and tag-tag."
+  log "  Add tags (hash-tag / tag) to docker image based on a tag."
   DOCKER_TAGS="$HASH_TAG $TAG_TAG"
   RETURNVALUE="$TAG_TAG"
 fi

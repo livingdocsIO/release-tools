@@ -1,6 +1,5 @@
 release-tools: Tagging and pushing Docker images.
-  Detecting a merge to the master branch.
-  Tagging one image: hash-tag.
+  Add tags (hash-tag) Add hash-tag to docker image based on the master branch.
   Executing: docker login -u=**** -p=****
   Executing: docker tag server:test livingdocs/service-server:hash-ma0a2fd
   Executing: docker push livingdocs/service-server:hash-ma0a2fd
