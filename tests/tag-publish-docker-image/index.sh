@@ -26,7 +26,7 @@ local_image_name_and_tag=server:test \
 git_branch=master \
 pull_request_branch=myfeat \
 commit_hash=fea0a2f \
-git_tag=false \
+commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/feature-branch
 assertTest $?
@@ -39,7 +39,7 @@ local_image_name_and_tag=server:test \
 git_branch=master \
 pull_request_branch='' \
 commit_hash=ma0a2fd \
-git_tag=false \
+commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/merge-master-branch
 assertTest $?
@@ -52,9 +52,22 @@ local_image_name_and_tag=server:test \
 git_branch=release-7 \
 pull_request_branch='' \
 commit_hash=rea0a2f \
-git_tag=v4.2.0 \
+commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/merge-release-branch
+assertTest $?
+
+yellowLog "Testing for merging on a tag."
+docker_username=dev@li.io \
+docker_password=1234567 \
+remote_image_name=livingdocs/service-server \
+local_image_name_and_tag=server:test \
+git_branch='' \
+pull_request_branch='' \
+commit_hash=rea0a2f \
+commit_tag=v4.2.0 \
+./bin/tag-publish-docker-image --test 2>&1 \
+  | diff - tests/tag-publish-docker-image/outputs/merge-release-tag
 assertTest $?
 
 yellowLog "Testing for a PR named myfeat from the release branch."
@@ -65,7 +78,7 @@ local_image_name_and_tag=server:test \
 git_branch=release-7 \
 pull_request_branch=myfeat \
 commit_hash=rea0a2f \
-git_tag=false \
+commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
@@ -78,7 +91,7 @@ local_image_name_and_tag=server:test \
 git_branch=random-7 \
 pull_request_branch='' \
 commit_hash=rea0a2f \
-git_tag=false \
+commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
@@ -91,7 +104,7 @@ local_image_name_and_tag=server:test \
 git_branch=random-7 \
 pull_request_branch=myfeat \
 commit_hash=rea0a2f \
-git_tag=false \
+commit_tag='' \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?

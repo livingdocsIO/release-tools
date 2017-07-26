@@ -29,6 +29,7 @@ areDockerCredentialsMissing () {
 isReleaseBranch () { [[ $GIT_BRANCH =~ ^release- ]]; }
 isMasterBranch () { [[ $GIT_BRANCH == master ]]; }
 isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
+hasTag () { [[ -n $COMMIT_TAG ]]; }
 isNotPullRequest () { ! isPullRequest; }
 
 isFeatureBranch () { isMasterBranch && isPullRequest; }
@@ -38,7 +39,8 @@ isMergingOnRelease () { isReleaseBranch && isNotPullRequest; }
 prepareTags () {
   HASH_TAG="hash-$COMMIT_HASH"
   FEATURE_TAG="feature-$PULL_REQUEST_BRANCH-hash-$COMMIT_HASH"
-  RELEASE_BRANCH_TAG="release-$GIT_BRANCH-tag-$GIT_TAG"
+  RELEASE_BRANCH_TAG="branch-$GIT_BRANCH-hash-$COMMIT_HASH"
+  TAG_TAG="tag-$COMMIT_TAG"
 }
 
 initializeDockerTags () { DOCKER_TAGS=''; }
@@ -83,7 +85,7 @@ LOCAL_IMAGE_NAME_AND_TAG=${local_image_name_and_tag:-''}
 GIT_BRANCH=${git_branch:-''}
 PULL_REQUEST_BRANCH=${pull_request_branch:-''}
 COMMIT_HASH=${commit_hash:-''}
-GIT_TAG=${git_tag:-''}
+COMMIT_TAG=${commit_tag:-''}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
 log "release-tools: Tagging and pushing Docker images."
@@ -114,6 +116,13 @@ if isMergingOnRelease; then
   log "  Tagging two images: hash-tag and release-branch-tag."
   DOCKER_TAGS="$HASH_TAG $RELEASE_BRANCH_TAG"
   RETURNVALUE="$RELEASE_BRANCH_TAG"
+fi
+
+if hasTag; then
+  log "  Detecting a tag."
+  log "  Tagging two images: hash-tag and tag-tag."
+  DOCKER_TAGS="$HASH_TAG $TAG_TAG"
+  RETURNVALUE="$TAG_TAG"
 fi
 
 if hasDockerTags; then

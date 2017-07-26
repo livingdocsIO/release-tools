@@ -13,9 +13,9 @@
 # Based on the set variables the script decides how to tag images
 # If you use Travis, you don't have to set this variables
 # GIT_BRANCH:                      Name of the branch
-# PULL_REQUEST_BRANCH              Pull request number
+# PULL_REQUEST_BRANCH              Pull request branch name
 # COMMIT_HASH                      Commit Hash
-# GIT_TAG                          Tag
+# COMMIT_TAG                          Tag
 
 log () {
   echo "$1" 1>&2;
@@ -38,7 +38,7 @@ local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
 git_branch=${TRAVIS_BRANCH:-${GIT_BRANCH}} \
 pull_request_branch=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_BRANCH}} \
 commit_hash=${TRAVIS_COMMIT:-${COMMIT_HASH}} \
-git_tag=${TRAVIS_TAG:-${GIT_TAG}} \
+commit_tag=${TRAVIS_TAG:-${COMMIT_TAG}} \
 $currentDir/tag-publish-docker-image)
 
 if [ -z "$dockerImageTag" ]; then
