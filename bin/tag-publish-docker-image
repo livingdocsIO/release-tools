@@ -2,7 +2,8 @@
 set -eu
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
-log() { echo "$@" 1>&2; }
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
 
 help () {
   log "This script tags and pushes a local docker image to docker hub."
@@ -100,7 +101,8 @@ DOCKER_TAGS=''
 [[ -z "$LOCAL_IMAGE_NAME_AND_TAG" ]] && help
 
 
-log "release-tools: Tagging and pushing Docker images."
+logYellow "tag and push docker images"
+
 
 if [[ $@ == --test ]]; then
   TEST_MODE=true
