@@ -1,18 +1,24 @@
-This script tags and pushes a local Docker image to the Docker Hub.
+This script tags and pushes a local docker image to docker hub.
 
----------------------------------------
-You MUST define the following variables
----------------------------------------
-<docker_username>                                                The username on Dockerhub
-<docker_password>                                                The password on Dockerhub
-<remote_image_name>        example: 'livingdocs/service-server'. The docker image name on Docker Hub without tag
-<local_image_name_and_tag> example: 'local/server:test'.         The docker image name of a local docker image
+---------------------------------------------------
+You MUST define the following environment variables
+---------------------------------------------------
+<DOCKER_USERNAME>                                                The username on docker hub
+<DOCKER_PASSWORD>                                                The password on docker hub
+<REMOTE_IMAGE_NAME>        example: 'livingdocs/service-server'. The docker image name on docker hub without tag
+<LOCAL_IMAGE_NAME_AND_TAG> example: 'local/server:test'.         The docker image name of a local docker image
 
 ------------------------------------------------------------------------------------------------------
-This environment variables are optional. Based on this variables the script decides how to tag images.
+You COULD define the following environment variables
+Based on this variables the script decides how to tag images.
 ------------------------------------------------------------------------------------------------------
-<pull_request_number>      example: '77' or ''
-<branch_name>              example: 'my-branch'                  Branch name or referenced branch name of a pull request
-<commit_sha>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'
-<commit_tag>               example: 'v4.2.0'
---test                                                           In test mode nothing gets executed, you see only log messages
+<PULL_REQUEST_NUMBER>      example: '77' or ''
+<BRANCH_NAME>              example: 'my-branch'                  Branch name or referenced branch name of a pull request
+<COMMIT_SHA>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'
+<COMMIT_TAG>               example: 'v4.2.0'
+
+----------
+Parameters
+----------
+--help / -h                Show help
+--test                     No execution of scripts, just show the log messages

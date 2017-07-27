@@ -5,24 +5,30 @@ set -eu
 log() { echo "$@" 1>&2; }
 
 help () {
-  log "This script tags and pushes a local Docker image to the Docker Hub."
+  log "This script tags and pushes a local docker image to docker hub."
   log ""
-  log "---------------------------------------"
-  log "You MUST define the following variables"
-  log "---------------------------------------"
-  log "<docker_username>                                                The username on Dockerhub"
-  log "<docker_password>                                                The password on Dockerhub"
-  log "<remote_image_name>        example: 'livingdocs/service-server'. The docker image name on Docker Hub without tag"
-  log "<local_image_name_and_tag> example: 'local/server:test'.         The docker image name of a local docker image"
+  log "---------------------------------------------------"
+  log "You MUST define the following environment variables"
+  log "---------------------------------------------------"
+  log "<DOCKER_USERNAME>                                                The username on docker hub"
+  log "<DOCKER_PASSWORD>                                                The password on docker hub"
+  log "<REMOTE_IMAGE_NAME>        example: 'livingdocs/service-server'. The docker image name on docker hub without tag"
+  log "<LOCAL_IMAGE_NAME_AND_TAG> example: 'local/server:test'.         The docker image name of a local docker image"
   log ""
   log "------------------------------------------------------------------------------------------------------"
-  log "This environment variables are optional. Based on this variables the script decides how to tag images."
+  log "You COULD define the following environment variables"
+  log "Based on this variables the script decides how to tag images."
   log "------------------------------------------------------------------------------------------------------"
-  log "<pull_request_number>      example: '77' or ''"
-  log "<branch_name>              example: 'my-branch'                  Branch name or referenced branch name of a pull request"
-  log "<commit_sha>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'"
-  log "<commit_tag>               example: 'v4.2.0'"
-  log "--test                                                           In test mode nothing gets executed, you see only log messages"
+  log "<PULL_REQUEST_NUMBER>      example: '77' or ''"
+  log "<BRANCH_NAME>              example: 'my-branch'                  Branch name or referenced branch name of a pull request"
+  log "<COMMIT_SHA>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'"
+  log "<COMMIT_TAG>               example: 'v4.2.0'"
+  log ""
+  log "----------"
+  log "Parameters"
+  log "----------"
+  log "--help / -h                Show help"
+  log "--test                     No execution of scripts, just show the log messages"
   exit 1
 }
 
@@ -73,14 +79,14 @@ execute () {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
 RETURN_VALUE=""
 TEST_MODE=false
-DOCKER_USERNAME=${docker_username:-''}
-DOCKER_PASSWORD=${docker_password:-''}
-REMOTE_IMAGE_NAME=${remote_image_name:-''}
-LOCAL_IMAGE_NAME_AND_TAG=${local_image_name_and_tag:-''}
-BRANCH_NAME=${branch_name:-''}
-PULL_REQUEST_NUMBER=${pull_request_number:-''}
-COMMIT_SHA=${commit_sha:-''}
-COMMIT_TAG=${commit_tag:-''}
+DOCKER_USERNAME=${DOCKER_USERNAME:-''}
+DOCKER_PASSWORD=${DOCKER_PASSWORD:-''}
+REMOTE_IMAGE_NAME=${REMOTE_IMAGE_NAME:-''}
+LOCAL_IMAGE_NAME_AND_TAG=${LOCAL_IMAGE_NAME_AND_TAG:-''}
+BRANCH_NAME=${BRANCH_NAME:-''}
+PULL_REQUEST_NUMBER=${PULL_REQUEST_NUMBER:-''}
+COMMIT_SHA=${COMMIT_SHA:-''}
+COMMIT_TAG=${COMMIT_TAG:-''}
 DOCKER_TAGS=''
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION

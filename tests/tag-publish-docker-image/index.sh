@@ -18,92 +18,92 @@ yellowLog "Testing for --help argument"
 assertTest $?
 
 yellowLog "Test tagging for a feature branch"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number=myfeat \
-branch_name=master \
-commit_sha=fea0a2f \
-commit_tag='' \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER=myfeat \
+BRANCH_NAME=master \
+COMMIT_SHA=fea0a2f \
+COMMIT_TAG= \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/feature-branch
 assertTest $?
 
 yellowLog "Test tagging for a master branch"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number='' \
-branch_name=master \
-commit_sha=ma0a2fd \
-commit_tag='' \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER= \
+BRANCH_NAME=master \
+COMMIT_SHA=ma0a2fd \
+COMMIT_TAG= \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/master-branch
 assertTest $?
 
 yellowLog "Test tagging for a release branch"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number='' \
-branch_name=release-7 \
-commit_sha=rea0a2f \
-commit_tag='' \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER= \
+BRANCH_NAME=release-7 \
+COMMIT_SHA=rea0a2f \
+COMMIT_TAG= \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/release-branch
 assertTest $?
 
 yellowLog "Test tagging for a tag"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number='' \
-branch_name='' \
-commit_sha=rea0a2f \
-commit_tag=v4.2.0 \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER= \
+BRANCH_NAME= \
+COMMIT_SHA=rea0a2f \
+COMMIT_TAG=v4.2.0 \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/tag
 assertTest $?
 
 yellowLog "Test tagging for a release branch with an open pull request"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number=myfeat \
-branch_name=release-7 \
-commit_sha=rea0a2f \
-commit_tag='' \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER=myfeat \
+BRANCH_NAME=release-7 \
+COMMIT_SHA=rea0a2f \
+COMMIT_TAG= \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
 
 yellowLog "Test tagging for a random branch"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number='' \
-branch_name=random-7 \
-commit_sha=rea0a2f \
-commit_tag='' \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER= \
+BRANCH_NAME=random-7 \
+COMMIT_SHA=rea0a2f \
+COMMIT_TAG= \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
 
 yellowLog "Test tagging for a random branch with an open pull request"
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-pull_request_number=myfeat \
-branch_name=random-7 \
-commit_sha=rea0a2f \
-commit_tag='' \
+DOCKER_USERNAME=dev@li.io \
+DOCKER_PASSWORD=1234567 \
+REMOTE_IMAGE_NAME=livingdocs/service-server \
+LOCAL_IMAGE_NAME_AND_TAG=server:test \
+PULL_REQUEST_NUMBER=myfeat \
+BRANCH_NAME=random-7 \
+COMMIT_SHA=rea0a2f \
+COMMIT_TAG= \
 ./bin/tag-publish-docker-image --test 2>&1 \
   | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?

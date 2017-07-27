@@ -8,29 +8,27 @@ log () {
 help () {
   log "You MUST defined the following environment variables:"
   log ""
+  log "<RELEASE_SERVER_HOST>             Hostname of livingdocs/release-server"
   log "<RELEASE_SERVER_SERVICE_HANDLE>   Service handle of livingdocs/release-server"
   exit 1
 }
 
 deploy_to_rancher () {
-  curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" https://releases.livingdocs.io/deploy;
+  curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" $RELEASE_SERVER_HOST/deploy;
 }
 
 # Mandatory environment variables
 [[ -z "$RELEASE_SERVER_SERVICE_HANDLE" ]] && help
+[[ -z "$RELEASE_SERVER_HOST" ]] && help
 
 log "execute script: tag-and-deploy-docker-image"
 
 # build docker image tags
 currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
-dockerImageTag=$(docker_username=$DOCKER_USERNAME \
-docker_password=$DOCKER_PASSWORD \
-remote_image_name=$REMOTE_IMAGE_NAME \
-local_image_name_and_tag=$LOCAL_IMAGE_NAME_AND_TAG \
-branch_name=${TRAVIS_BRANCH:-${BRANCH_NAME:-''}} \
-pull_request_number=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_NUMBER:-''}} \
-commit_sha=${TRAVIS_COMMIT:-${COMMIT_SHA:-''}} \
-commit_tag=${TRAVIS_TAG:-${COMMIT_TAG:-''}} \
+dockerImageTag=$(BRANCH_NAME=${TRAVIS_BRANCH:-${BRANCH_NAME:-''}} \
+PULL_REQUEST_NUMBER=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_NUMBER:-''}} \
+COMMIT_SHA=${TRAVIS_COMMIT:-${COMMIT_SHA:-''}} \
+COMMIT_TAG=${TRAVIS_TAG:-${COMMIT_TAG:-''}} \
 $currentDir/tag-publish-docker-image)
 
 if [ -z "$dockerImageTag" ]; then
