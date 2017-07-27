@@ -10,30 +10,30 @@ source $currentDir/helper
 
 # Help messages
 if [ "x$1" = "x" ] || [ "x$2" = "x" ]; then
-  logYellow "This script will create a branch based on master or a specific tag."
-  logYellow "Argument 1 (MUST)     : <release-version> to create f.e. 10.0.0"
-  logYellow "Argument 2 (MUST)     : <create branch based on> [master|tag] -> tag is f.e. v2.4.0"
+  yellowLog "This script will create a branch based on master or a specific tag."
+  yellowLog "Argument 1 (MUST)     : <release-version> to create f.e. 10.0.0"
+  yellowLog "Argument 2 (MUST)     : <create branch based on> [master|tag] -> tag is f.e. v2.4.0"
   exit 1
 fi
 
 
 # Does the package.json exist?
 if ! [ -f "./package.json" ]; then
-    logYellow 'ERR: You must run the script from the project root.'
+    yellowLog 'ERR: You must run the script from the project root.'
     exit 1
 fi
 
 
 # Does the tag exist?
 if [[ "$masterTag" != "master" ]] && [[ "$hasTag" != "1" ]]; then
-    logYellow "ERR: The tag $tag does not exist."
+    yellowLog "ERR: The tag $tag does not exist."
     exit 1
 fi
 
 
 # Does the branch to create already exist?
 if [ $(git branch -a | grep "release-$releaseVersion") ]; then
-   logYellow "ERR: Branch release-$releaseVersion already exists."
+   yellowLog "ERR: Branch release-$releaseVersion already exists."
    exit 1
 fi
 
@@ -41,12 +41,12 @@ fi
 # Are there uncommited changes?
 hasUncommitedChanges=$(git diff)
 if [[ $hasUncommitedChanges ]]; then
-    logYellow "ERR: You have uncommited changes."
+    yellowLog "ERR: You have uncommited changes."
     exit 1
 fi
 
 
-logYellow "Initialize the most recent master branch"
+yellowLog "Initialize the most recent master branch"
 git fetch --all
 git checkout master
 git reset --hard HEAD
@@ -54,7 +54,7 @@ git pull --rebase origin master
 git reset --hard origin/master
 
 
-logYellow "Create new release version $releaseVersion based on $masterTag"
+yellowLog "Create new release version $releaseVersion based on $masterTag"
 if [[ "$masterTag" != "master" ]]; then
     git checkout "$masterTag"
 fi
@@ -63,14 +63,14 @@ cat package.json | jq ".release=\"$releaseVersion\"" > package.json.tmp
 mv package.json.tmp package.json
 
 
-logYellow "Update and push package.json to the release branch release-$releaseVersion"
+yellowLog "Update and push package.json to the release branch release-$releaseVersion"
 if [ -f "./package.json" ]; then git add package.json; fi
 git diff --quiet --exit-code --cached || git commit -am "Updated version to $releaseVersion"
 git push origin "release-$releaseVersion"
 
 
-logYellow "Delete the local release branch release-$releaseVersion"
+yellowLog "Delete the local release branch release-$releaseVersion"
 git checkout master
 git branch -D "release-$releaseVersion"
 
-logYellow "init-release has been executed successfully"
+yellowLog "init-release has been executed successfully"

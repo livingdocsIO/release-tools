@@ -1,4 +1,6 @@
-release-tools: Tagging and pushing Docker images.
+
+tag and push docker images
+
   Add tags (sha-tag / tag) to docker image based on a tag.
   Executing: docker login -u=**** -p=****
   Executing: docker tag server:test livingdocs/service-server:sha-rea0a2f

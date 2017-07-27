@@ -21,4 +21,4 @@ Based on this variables the script decides how to tag images.
 Parameters
 ----------
 --help / -h                Show help
---test                     No execution of scripts, just show the log messages
+--dry-run                  No execution of the script (just logs)

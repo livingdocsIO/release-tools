@@ -1,3 +1,5 @@
-release-tools: Tagging and pushing Docker images.
+
+tag and push docker images
+
   No tagging scenario has been applied based on the passed arguments. Abort operation.
 

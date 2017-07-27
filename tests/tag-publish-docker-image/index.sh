@@ -1,7 +1,7 @@
 #!/bin/bash
-yellowLog () { echo -e "\033[0;93m$*\033[0;0m"; }
-greenLog () { echo -e "\033[0;32m$*\033[0;0m"; }
-redLog () { echo -e "\033[0;31m$*\033[0;0m"; }
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
+
 isLastCommandSuccessful () { [[ $1 == 0 ]]; }
 assertTest () {
   if isLastCommandSuccessful $1; then
@@ -14,7 +14,7 @@ assertTest () {
 yellowLog "Testing for --help argument"
 ./bin/tag-publish-docker-image \
   --help 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/help
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/help
 assertTest $?
 
 yellowLog "Test tagging for a feature branch"
@@ -26,8 +26,8 @@ PULL_REQUEST_NUMBER=myfeat \
 BRANCH_NAME=master \
 COMMIT_SHA=fea0a2f \
 COMMIT_TAG= \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/feature-branch
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/feature-branch
 assertTest $?
 
 yellowLog "Test tagging for a master branch"
@@ -39,8 +39,8 @@ PULL_REQUEST_NUMBER= \
 BRANCH_NAME=master \
 COMMIT_SHA=ma0a2fd \
 COMMIT_TAG= \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/master-branch
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/master-branch
 assertTest $?
 
 yellowLog "Test tagging for a release branch"
@@ -52,8 +52,8 @@ PULL_REQUEST_NUMBER= \
 BRANCH_NAME=release-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/release-branch
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/release-branch
 assertTest $?
 
 yellowLog "Test tagging for a tag"
@@ -65,8 +65,8 @@ PULL_REQUEST_NUMBER= \
 BRANCH_NAME= \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG=v4.2.0 \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/tag
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/tag
 assertTest $?
 
 yellowLog "Test tagging for a release branch with an open pull request"
@@ -78,8 +78,8 @@ PULL_REQUEST_NUMBER=myfeat \
 BRANCH_NAME=release-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
 
 yellowLog "Test tagging for a random branch"
@@ -91,8 +91,8 @@ PULL_REQUEST_NUMBER= \
 BRANCH_NAME=random-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?
 
 yellowLog "Test tagging for a random branch with an open pull request"
@@ -104,6 +104,6 @@ PULL_REQUEST_NUMBER=myfeat \
 BRANCH_NAME=random-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
-./bin/tag-publish-docker-image --test 2>&1 \
-  | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+./bin/tag-publish-docker-image --dry-run 2>&1 \
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
 assertTest $?

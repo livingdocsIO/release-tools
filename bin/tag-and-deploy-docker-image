@@ -30,11 +30,11 @@ $currentDir/tag-publish-docker-image)
 
 if [ -z "$dockerImageTag" ]; then
   log "  Error: There was an error during image tagging. No docker image tag has been set."
-  logYellow "FAIL"
+  yellowLog "FAIL"
   exit 1
 fi
 
-logYellow "tag and deploy docker images"
+yellowLog "tag and deploy docker images"
 # deploy to release-server -> rancher
 deploy_to_rancher $dockerImageTag
-logYellow "DONE"
+yellowLog "DONE"
