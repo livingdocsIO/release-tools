@@ -1,46 +1,20 @@
-# Release-tools
-CLI tools for handling a release on git/github
+# Release Tools
 
-## Purpose
-
-TODO
+The release tools are a bunch of command line tools to maintain a release. Usually this tools are used by a release manager.
 
 ## Usage
-```bash
-git clone
-git@github.com:upfrontIO/release-tools.git
-cd release-tools
-```
 
-### Create a release branch
-```bash
-./li-release create-release-branch \
-  release-version \
-  masterTag
-```
+Execute `li-release` on the command line and you will see all available commands. Every command has a help function as soon as you execute them without arguments, e.g. `li-release init-release`.
 
-### Finish release
-```bash
-./li-release finish-release \
-  release-version
-```
 
-### Tag and publish a Docker image
 
-#### Execution example for a release branch
-```bash  
-docker_username=dev@li.io \
-docker_password=1234567 \
-remote_image_name=livingdocs/service-server \
-local_image_name_and_tag=server:test \
-branch_name=release-7 \
-pull_request_number='' \
-commit_sha=rea0a2f \
-git_tag=v4.2.0 \
-./bin/tag-publish-docker-image
-```
 
-### Running the tests
+## Examples
+
+- [How to Handle a Release on Github](./doc/how-to-handle-a-release.md)
+
+
+## Run the tests
 ```bash
 npm test
 ```
@@ -49,4 +23,4 @@ npm test
 
 Copyright (c) 2017 Livingdocs AG, all rights reserved
 
-It is not permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this Software ('release-managers'), except when explicitly stated otherwise by Livingdocs AG.
+It is not permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this Software ('release-tools'), except when explicitly stated otherwise by Livingdocs AG.

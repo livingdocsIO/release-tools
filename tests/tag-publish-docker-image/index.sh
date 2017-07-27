@@ -1,6 +1,6 @@
 #!/bin/bash
 currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
-source $currentDir/helper
+source $currentDir/../../bin/helper
 
 isLastCommandSuccessful () { [[ $1 == 0 ]]; }
 assertTest () {
