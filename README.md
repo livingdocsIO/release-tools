@@ -11,7 +11,7 @@ Execute `li-release` on the command line and you will see all available commands
 
 ## Examples
 
-- [How to Handle a Release on Github](./doc/how-to-handle-a-release.md)
+- [How to Handle a Release on Github](./doc/how-to-handle-a-release-on-github.md)
 
 
 ## Run the tests
