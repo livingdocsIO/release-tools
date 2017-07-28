@@ -3,7 +3,7 @@ set -e
 
 releaseVersion=$1
 
-currentDir=$(node -e "console.yellowLog(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
 source $currentDir/helper
 
 
