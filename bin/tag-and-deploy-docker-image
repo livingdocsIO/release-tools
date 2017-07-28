@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -e
+
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
+
+help () {
+  log "You MUST defined the following environment variables:"
+  log ""
+  log "<RELEASE_SERVER_HOST>             Hostname of livingdocs/release-server"
+  log "<RELEASE_SERVER_SERVICE_HANDLE>   Service handle of livingdocs/release-server"
+  exit 1
+}
+
+deploy_to_rancher () {
+  curl -i -XPOST -H 'Content-Type:application/json' -d "{\"serviceHandle\":\"$RELEASE_SERVER_SERVICE_HANDLE\",\"dockerImageTag\":\"$1\"}" $RELEASE_SERVER_HOST/deploy;
+}
+
+# Mandatory environment variables
+[[ -z "$RELEASE_SERVER_SERVICE_HANDLE" ]] && help
+[[ -z "$RELEASE_SERVER_HOST" ]] && help
+
+
+# build docker image tags
+dockerImageTag=$(BRANCH_NAME=${TRAVIS_BRANCH:-${BRANCH_NAME:-''}} \
+PULL_REQUEST_NUMBER=${TRAVIS_PULL_REQUEST:-${PULL_REQUEST_NUMBER:-''}} \
+COMMIT_SHA=${TRAVIS_COMMIT:-${COMMIT_SHA:-''}} \
+COMMIT_TAG=${TRAVIS_TAG:-${COMMIT_TAG:-''}} \
+$currentDir/tag-publish-docker-image)
+
+if [ -z "$dockerImageTag" ]; then
+  log "  Error: There was an error during image tagging. No docker image tag has been set."
+  yellowLog "FAIL"
+  exit 1
+fi
+
+yellowLog "tag and deploy docker images"
+# deploy to release-server -> rancher
+deploy_to_rancher $dockerImageTag
+yellowLog "DONE"

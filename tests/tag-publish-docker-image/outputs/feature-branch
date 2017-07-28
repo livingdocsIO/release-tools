@@ -1,0 +1,10 @@
+
+tag and push docker images
+
+  Add tags (sha-tag / feature-tag) to docker image based on a feature branch.
+  Executing: docker login -u=**** -p=****
+  Executing: docker tag server:test livingdocs/service-server:sha-fea0a2f
+  Executing: docker push livingdocs/service-server:sha-fea0a2f
+  Executing: docker tag server:test livingdocs/service-server:feature-myfeat-sha-fea0a2f
+  Executing: docker push livingdocs/service-server:feature-myfeat-sha-fea0a2f
+feature-myfeat-sha-fea0a2f

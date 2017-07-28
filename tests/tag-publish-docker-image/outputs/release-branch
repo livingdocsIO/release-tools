@@ -1,0 +1,10 @@
+
+tag and push docker images
+
+  Add tags (sha-tag / release-branch-tag) to docker image based on a release branch.
+  Executing: docker login -u=**** -p=****
+  Executing: docker tag server:test livingdocs/service-server:sha-rea0a2f
+  Executing: docker push livingdocs/service-server:sha-rea0a2f
+  Executing: docker tag server:test livingdocs/service-server:branch-release-7-sha-rea0a2f
+  Executing: docker push livingdocs/service-server:branch-release-7-sha-rea0a2f
+branch-release-7-sha-rea0a2f

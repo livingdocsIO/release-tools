@@ -1,0 +1,8 @@
+
+tag and push docker images
+
+  Add tags (sha-tag) Add sha-tag to docker image based on the master branch.
+  Executing: docker login -u=**** -p=****
+  Executing: docker tag server:test livingdocs/service-server:sha-ma0a2fd
+  Executing: docker push livingdocs/service-server:sha-ma0a2fd
+sha-ma0a2fd

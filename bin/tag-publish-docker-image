@@ -1,0 +1,148 @@
+#!/bin/bash
+set -eu
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
+
+help () {
+  log "This script tags and pushes a local docker image to docker hub."
+  log ""
+  log "---------------------------------------------------"
+  log "You MUST define the following environment variables"
+  log "---------------------------------------------------"
+  log "<DOCKER_USERNAME>                                                The username on docker hub"
+  log "<DOCKER_PASSWORD>                                                The password on docker hub"
+  log "<REMOTE_IMAGE_NAME>        example: 'livingdocs/service-server'. The docker image name on docker hub without tag"
+  log "<LOCAL_IMAGE_NAME_AND_TAG> example: 'local/server:test'.         The docker image name of a local docker image"
+  log ""
+  log "------------------------------------------------------------------------------------------------------"
+  log "You COULD define the following environment variables"
+  log "Based on this variables the script decides how to tag images."
+  log "------------------------------------------------------------------------------------------------------"
+  log "<PULL_REQUEST_NUMBER>      example: '77' or ''"
+  log "<BRANCH_NAME>              example: 'my-branch'                  Branch name or referenced branch name of a pull request"
+  log "<COMMIT_SHA>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'"
+  log "<COMMIT_TAG>               example: 'v4.2.0'"
+  log ""
+  log "----------"
+  log "Parameters"
+  log "----------"
+  log "--help / -h                Show help"
+  log "--dry-run                  No execution of the script (just logs)"
+  exit 1
+}
+
+isReleaseBranch () { [[ $BRANCH_NAME =~ ^release- ]]; }
+isMasterBranch () { [[ $BRANCH_NAME == master ]]; }
+isFeatureBranch () { isMasterBranch && isPullRequest; }
+isPullRequest () { [[ $PULL_REQUEST_NUMBER != '' ]]; }
+isNotPullRequest () { ! isPullRequest; }
+hasTag () { [[ -n $COMMIT_TAG ]]; }
+
+prepareTags () {
+  SHA_TAG="sha-$COMMIT_SHA"
+  FEATURE_TAG="feature-$PULL_REQUEST_NUMBER-sha-$COMMIT_SHA"
+  RELEASE_BRANCH_TAG="branch-$BRANCH_NAME-sha-$COMMIT_SHA"
+  TAG_TAG="tag-$COMMIT_TAG"
+}
+
+hasDockerTags () { [ "x$DOCKER_TAGS" != "x" ]; }
+
+dockerLogin () {
+  log "  Executing: docker login -u=**** -p=****"
+  execute \
+    "docker login -u=\"$DOCKER_USERNAME\" -p=\"$DOCKER_PASSWORD\""
+}
+
+dockerTag () {
+  DOCKER_REMOTE_IMAGE=$1
+  DOCKER_TAG_COMMAND="docker tag $LOCAL_IMAGE_NAME_AND_TAG $DOCKER_REMOTE_IMAGE"
+  log "  Executing: $DOCKER_TAG_COMMAND"
+  execute $DOCKER_TAG_COMMAND
+}
+
+dockerPush () {
+  DOCKER_REMOTE_IMAGE=$1
+  DOCKER_PUSH_COMMAND="docker push $DOCKER_REMOTE_IMAGE"
+  log "  Executing: $DOCKER_PUSH_COMMAND"
+  execute $DOCKER_PUSH_COMMAND
+}
+
+isNotInTestMode () { ! [[ $TEST_MODE == true ]]; }
+
+execute () {
+  if isNotInTestMode; then
+    eval $* 1>&2
+  fi
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
+RETURN_VALUE=""
+TEST_MODE=false
+DOCKER_USERNAME=${DOCKER_USERNAME:-''}
+DOCKER_PASSWORD=${DOCKER_PASSWORD:-''}
+REMOTE_IMAGE_NAME=${REMOTE_IMAGE_NAME:-''}
+LOCAL_IMAGE_NAME_AND_TAG=${LOCAL_IMAGE_NAME_AND_TAG:-''}
+BRANCH_NAME=${BRANCH_NAME:-''}
+PULL_REQUEST_NUMBER=${PULL_REQUEST_NUMBER:-''}
+COMMIT_SHA=${COMMIT_SHA:-''}
+COMMIT_TAG=${COMMIT_TAG:-''}
+DOCKER_TAGS=''
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
+# show help if --help / -h is passed as parameter
+[[ $@ == --help || $@ == -h ]] && help
+
+# Mandatory environment variables
+[[ -z "$DOCKER_USERNAME" ]] && help
+[[ -z "$DOCKER_PASSWORD" ]] && help
+[[ -z "$REMOTE_IMAGE_NAME" ]] && help
+[[ -z "$LOCAL_IMAGE_NAME_AND_TAG" ]] && help
+
+if [[ $@ == --dry-run ]]; then
+  TEST_MODE=true
+fi
+
+yellowLog "tag and push docker images"
+
+prepareTags
+
+if isFeatureBranch; then
+  log "  Add tags (sha-tag / feature-tag) to docker image based on a feature branch."
+  DOCKER_TAGS="$SHA_TAG $FEATURE_TAG"
+  RETURN_VALUE="$FEATURE_TAG"
+fi
+
+if isMasterBranch && isNotPullRequest; then
+  log "  Add tags (sha-tag) Add sha-tag to docker image based on the master branch."
+  DOCKER_TAGS="$SHA_TAG"
+  RETURN_VALUE="$SHA_TAG"
+fi
+
+if isReleaseBranch && isNotPullRequest; then
+  log "  Add tags (sha-tag / release-branch-tag) to docker image based on a release branch."
+  DOCKER_TAGS="$SHA_TAG $RELEASE_BRANCH_TAG"
+  RETURN_VALUE="$RELEASE_BRANCH_TAG"
+fi
+
+if hasTag; then
+  log "  Add tags (sha-tag / tag) to docker image based on a tag."
+  DOCKER_TAGS="$SHA_TAG $TAG_TAG"
+  RETURN_VALUE="$TAG_TAG"
+fi
+
+if hasDockerTags; then
+  dockerLogin
+  for DOCKER_TAG in $DOCKER_TAGS; do
+    DOCKER_REMOTE_IMAGE=$REMOTE_IMAGE_NAME:$DOCKER_TAG
+
+    dockerTag $DOCKER_REMOTE_IMAGE
+    dockerPush $DOCKER_REMOTE_IMAGE
+  done
+else
+  log "  No tagging scenario has been applied based on the passed arguments. Abort operation."
+fi
+
+# use the return value in stdout
+echo $RETURN_VALUE

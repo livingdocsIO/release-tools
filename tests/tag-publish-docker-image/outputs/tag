@@ -1,0 +1,10 @@
+
+tag and push docker images
+
+  Add tags (sha-tag / tag) to docker image based on a tag.
+  Executing: docker login -u=**** -p=****
+  Executing: docker tag server:test livingdocs/service-server:sha-rea0a2f
+  Executing: docker push livingdocs/service-server:sha-rea0a2f
+  Executing: docker tag server:test livingdocs/service-server:tag-v4.2.0
+  Executing: docker push livingdocs/service-server:tag-v4.2.0
+tag-v4.2.0
