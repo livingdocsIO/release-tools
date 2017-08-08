@@ -13,3 +13,8 @@ yellowLog () {
 
 greenLog () { echo -e "\033[0;32m$*\033[0;0m" 1>&2; }
 redLog () { echo -e "\033[0;31m$*\033[0;0m" 1>&2; }
+
+# check dependencies https://stackoverflow.com/questions/592620/check-if-a-program-exists-from-a-bash-script
+hash git 2>/dev/null || { redLog "init-release requires 'git', but it's not installed.  Aborting."; exit 1; }
+hash jq 2>/dev/null || { redLog "init-release requires 'jq', but it's not installed.  Aborting."; exit 1; }
+hash node 2>/dev/null || { redLog "init-release requires 'node', but it's not installed.  Aborting."; exit 1; }

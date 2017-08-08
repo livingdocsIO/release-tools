@@ -1,12 +1,15 @@
 #!/bin/bash
 set -e
 
+# require helper
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
+
+
 releaseVersion=$1
 masterTag=$2
 hasTag=$(git tag -l "$masterTag" | wc -l | tr -d '[:space:]')
 
-currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
-source $currentDir/helper
 
 # Help messages
 if [ "x$1" = "x" ] || [ "x$2" = "x" ]; then
