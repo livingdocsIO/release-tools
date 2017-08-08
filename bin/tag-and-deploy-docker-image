@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+# require helper
 currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
 source $currentDir/helper
 
