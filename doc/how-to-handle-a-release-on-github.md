@@ -6,7 +6,7 @@ The release tools are aligned to the [cactus branch model](https://barro.github.
 
 If you want to create a new release based on the master branch
 
-![visualizing a release on github](./how-to-handle-a-release.jpg)
+![visualizing a standard release on github](./how-to-handle-a-standard-release.jpg)
 
 1. `li-release init-release 1.0.0 master` creates a new release branch `release-1.0.0` based on the last master commit
 2. make your fixes to the release branch `release-1.0.0` until it's ready for a deployment
@@ -17,6 +17,8 @@ If you want to create a new release based on the master branch
 ## Example 2: Patch Release
 
 After a release has been finished (f.e. `1.0.0`) and then you find errors in your `1.0.0` release and you need to make additional patches for a version `1.0.1`, you can create a new release branch based on version `1.0.0`.
+
+![visualizing a patch release on github](./how-to-handle-a-patch-release.png)
 
 1. `li-release init-release 1.0.1 1.0.0` creates a new release branch `release-1.0.1` based on the tag `1.0.0`
 2. make your fixes to the release branch `release-1.0.1` until it's ready for a deployment
