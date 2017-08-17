@@ -12,6 +12,7 @@ Execute `li-release` on the command line and you will see all available commands
 ## Examples
 
 - [How to Handle a Release on Github](./doc/how-to-handle-a-release-on-github.md)
+- [How to Tag and Push a Docker Image ](./doc/how-to-tag-and-push-a-docker-image.md)
 
 
 ## Run the tests
