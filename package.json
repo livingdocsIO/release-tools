@@ -7,7 +7,7 @@
     "li-release": "./li-release"
   },
   "scripts": {
-    "test": "./tests/index.sh",
+    "test": "./tests/index.sh && tape tests/js/*.js | tap-spec",
     "semantic-release": "./bin/semantic-release.sh"
   },
   "repository": {
@@ -25,7 +25,6 @@
     "semver": "^5.3.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.8.0"
-
   },
   "release": {
     "verifyConditions": "@semantic-release/condition-travis"
