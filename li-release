@@ -4,10 +4,13 @@ currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpath
 help () {
   >&2 echo "Usage: $0 <command>"
   >&2 echo ""
-  >&2 echo "  commands for a release:"
+  >&2 echo "  commands for a customer release (f.e. livingdocs-service-server or livingdocs-bluewin-server):"
   >&2 echo "   init-release:                    Inits a release (create release branch, updates release related files, push it to github)"
   >&2 echo "   finish-release:                  Finishes a release (add tag to last commit, push it to github)"
   >&2 echo "   tag-and-deploy-docker-image:     Tag, publish and deploy docker image to rancher"
+  >&2 echo ""
+  >&2 echo "  commands for a core release (f.e. livingdocs-server):"
+  >&2 echo "   create-maintenance-release:      Creates a maintenance release branch to maintain older versions"
   >&2 echo ""
   >&2 echo "  helper commands:"
   >&2 echo "   upgrade-rancher-container:       Upgrade the image of a rancher service"
@@ -27,6 +30,9 @@ case "$cmd" in
         ;;
     finish-release)
         $currentDir/bin/finish-release $*
+        ;;
+    create-maintenance-release)
+        $currentDir/bin/create-maintenance-release $*
         ;;
     tag-publish-docker-image)
         $currentDir/bin/tag-publish-docker-image $*

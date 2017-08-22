@@ -1,0 +1,162 @@
+#!/bin/bash
+set -e
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FUNCTIONS
+# require helper
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
+
+help () {
+  log ""
+  log "This script creates a maintenance release (for the upstream e.g. livingdocs-editor / livingdocs-server."
+  log ""
+  log "-----------------------------------------------------------------------------------------------------------------------"
+  log "Parameters"
+  log "-----------------------------------------------------------------------------------------------------------------------"
+  log "--help / -h               Show help"
+  log "--base-tag                Base tag where the maintenance branch will be branched from e.g. '--base-tag v55.0.0'"
+  log "--npm-auth-token          npm-auth-token with write access e.g. '--npm-auth-token 11111111-2222-3333-4444-555555555555'"
+  log "--dry-run                 No execution of the script (just logs) '--dry-run true' (default: false)"
+  log ""
+  exit 1
+}
+
+assignCLIParameters () {
+  # parse command line argumens in bash
+  # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+  while [[ $# -gt 0 ]]
+  do
+    key="$1"
+
+    case $key in
+        --base-tag)
+          export BASE_TAG="$2"
+          shift
+        ;;
+        --npm-auth-token)
+          export NPM_AUTH_TOKEN="$2"
+          shift
+        ;;
+        --dry-run)
+          if [ "$2" = true ] ; then export TEST_MODE="$2"; fi
+          shift
+        ;;
+        *)
+          redLog "parameter '$key' is unknown."
+          help
+          exit 1
+        ;;
+    esac
+    if [[ $# -gt 0 ]]; then shift; fi
+  done
+}
+
+isNotInTestMode () { ! [[ $TEST_MODE == true ]]; }
+
+execute () {
+  if isNotInTestMode; then
+    eval $* 1>&2
+  fi
+}
+
+executeAndLog () {
+  log "  Executing: $1"
+  execute $1
+}
+
+hasPackageJson () {
+  if ! [ -f "./package.json" ]; then
+    redLog 'ERR: You must run the script from the project root.'
+    exit 1
+  fi
+}
+
+hasMaintenanceBranch () {
+  if ! [ -z "$(git branch -a | grep $MAINTENANCE_BRANCH)" ]; then
+    redLog "ERR: Branch $MAINTENANCE_BRANCH already exists locally or remote."
+    exit 1
+  fi
+}
+
+hasUncommitedChanges () {
+  hasUncommitedChanges=$(git diff)
+  if [[ $hasUncommitedChanges ]]; then
+      redLog "ERR: You have uncommited changes."
+      exit 1
+  fi
+}
+
+initializeMasterBranch () {
+  log "Initialize the most recent master branch"
+  executeAndLog "git fetch --all"
+  executeAndLog "git checkout master"
+  executeAndLog "git reset --hard HEAD"
+  executeAndLog "git pull --rebase origin master"
+  executeAndLog "git reset --hard origin/master"
+}
+
+createMaintenanceBranch () {
+  log "Create branch $MAINTENANCE_BRANCH based on $BASE_TAG"
+  executeAndLog "node $currentDir/../js/can_create_release.js $BASE_TAG"
+  executeAndLog "git checkout $BASE_TAG"
+  executeAndLog "git checkout -b $MAINTENANCE_BRANCH"
+}
+
+# semantic-release only runs on master by default.
+# Set release.branch to maintenance-<version> in package.json to enable semantic-release on your non-master branch.
+# semantic-release publishes the new version as `latest` by default.
+# As you're releasing an old version, set publishConfig.tag to prevent a release of the `latest` dist-tag
+# Both steps are required to not mess up other customers installations
+updatePackage () {
+  log "Update package.json with semantic-release information"
+  executeAndLog "cat package.json
+             | jq \".release.branch=\\\"$MAINTENANCE_BRANCH\\\" | .publishConfig.tag=\\\"$MAINTENANCE_TAG\\\"\"
+             | cat > package.json.tmp && mv package.json.tmp package.json"
+}
+
+# Pass the auth token you generated above in the following command.
+# Make sure you have a write access token, or you'll get a 404
+# e.g. npm dist-tag add @livingdocs/editor@v7.3.4 maintenance-v7.3.4
+addNPMDistTag () {
+  log "Add tag $MAINTENANCE_TAG to npm package version $npmPackageName@$BASE_TAG"
+  npmPackageName=$(node -e 'console.log(require("./package.json").name)')
+  command="npm dist-tag add $npmPackageName@$BASE_TAG $MAINTENANCE_TAG --//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN"
+  message="npm dist-tag add $npmPackageName@$BASE_TAG $MAINTENANCE_TAG --//registry.npmjs.org/:_authToken=****"
+  log "  Executing: $message"
+  execute $command
+}
+
+pushToGithub () {
+  log "Push branch $MAINTENANCE_BRANCH to github"
+  executeAndLog "git add package.json;
+             git commit -m \"chore: Setup up maintenance branch $MAINTENANCE_BRANCH\";
+             git push origin $MAINTENANCE_BRANCH"
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
+TEST_MODE=false
+BASE_TAG=""
+NPM_AUTH_TOKEN=""
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXECUTION
+# show help if --help / -h is passed as parameter
+[[ $@ == --help || $@ == -h ]] && help
+
+assignCLIParameters $@
+
+# Mandatory parameters
+[[ -z "$BASE_TAG" ]] && help
+[[ -z "$NPM_AUTH_TOKEN" ]] && help
+
+export MAINTENANCE_BRANCH="maintenance-$(echo $BASE_TAG | cut -d '.' -f1 -f2).x"
+export MAINTENANCE_TAG=$MAINTENANCE_BRANCH
+
+yellowLog "Setup the maintenance branch $BASE_TAG"
+hasPackageJson
+hasMaintenanceBranch
+hasUncommitedChanges
+initializeMasterBranch
+createMaintenanceBranch
+updatePackage
+addNPMDistTag
+pushToGithub

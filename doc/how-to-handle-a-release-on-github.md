@@ -1,4 +1,4 @@
-# How to Handle a Release on Github
+# How to Handle a Customer Release on Github
 
 The release tools are aligned to the [cactus branch model](https://barro.github.io/2016/02/a-succesful-git-branching-model-considered-harmful/cactus-model.pdf) approach. This means you merge your pull requests to your integration branch (master). If you want to make a new release, you create a new release branch based on master (or a tag) and then make this branch ready for the deployment. From this time on master and the release branch are diverging. No merging from one to the other branch happens.
 
