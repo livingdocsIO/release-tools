@@ -64,8 +64,41 @@ executeAndLog () {
   execute $1
 }
 
+hasPackageJson () {
+  if ! [ -f "./package.json" ]; then
+    redLog 'ERR: You must run the script from the project root.'
+    exit 1
+  fi
+}
+
+# Does the branch to create already exist?
+hasMaintenanceBranch () {
+  if ! [ -z "$(git branch -a | grep $MAINTENANCE_BRANCH)" ]; then
+    redLog "ERR: Branch $MAINTENANCE_BRANCH already exists locally or remote."
+    exit 1
+  fi
+}
+
+hasUncommitedChanges () {
+  hasUncommitedChanges=$(git diff)
+  if [[ $hasUncommitedChanges ]]; then
+      redLog "ERR: You have uncommited changes."
+      exit 1
+  fi
+}
+
+initializeMasterBranch () {
+  yellowLog "Initialize the most recent master branch"
+  executeAndLog "git fetch --all"
+  executeAndLog "git checkout master"
+  executeAndLog "git reset --hard HEAD"
+  executeAndLog "git pull --rebase origin master"
+  executeAndLog "git reset --hard origin/master"
+}
+
 createMaintenanceBranch () {
-  executeAndLog "git checkout $BASE_TAG "
+  executeAndLog "node $currentDir/../js/can_create_release.js $BASE_TAG"
+  executeAndLog "git checkout $BASE_TAG"
   executeAndLog "git checkout -b $MAINTENANCE_BRANCH"
 }
 
@@ -117,6 +150,13 @@ export MAINTENANCE_BRANCH="maintenance-$(echo $BASE_TAG | cut -d '.' -f1 -f2).x"
 export MAINTENANCE_TAG=$MAINTENANCE_BRANCH
 
 yellowLog "Setup the maintenance branch $BASE_TAG"
+hasPackageJson
+hasMaintenanceBranch
+hasUncommitedChanges
+initializeMasterBranch
+
+exit 1
+
 createMaintenanceBranch
 updatePackage
 addNPMDistTag
