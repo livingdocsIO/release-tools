@@ -23,9 +23,11 @@ test('mocked listGitTags()', function (t) {
 });
 
 test('version is the latest version and has a minor or major successor version', function (t) {
-  t.plan(2)
+  t.plan(4)
   t.true(validateRelease.patch('1.0.2', mockedGitTags))
+  t.true(validateRelease.patch('v1.0.2', mockedGitTags))
   t.true(validateRelease.patch('2.0.1', mockedGitTags))
+  t.true(validateRelease.patch('v2.0.1', mockedGitTags))
 })
 
 test('version is NOT the latest version', function (t) {
@@ -39,6 +41,11 @@ test('version has NOT a minor or major version a successor', function (t) {
   t.plan(2)
   t.false(validateRelease.patch('2.1.0', mockedGitTags))
   t.false(validateRelease.patch('4.0.0', mockedGitTags))
+})
+
+test('version is not a valid semver string', function (t) {
+  t.plan(1)
+  t.false(validateRelease.patch('blubb', mockedGitTags))
 })
 
 test.onFinish(function () {

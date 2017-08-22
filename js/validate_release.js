@@ -1,25 +1,33 @@
 const semver = require("semver")
 const exec = require('child_process').exec
 
-// console.log(process.argv)
-
 module.exports = {
   listGitTags,
   patch
 }
 
 function patch (currentVersion, versions) {
-  const expectedPatchVersion = semver.maxSatisfying(versions, `${semver.major(currentVersion)}.${semver.minor(currentVersion)}.*`)
-  const nextMinorVersion = semver.inc(currentVersion, 'minor')
-  const nextMajorVersion = semver.inc(currentVersion, 'major')
+  if (semver.valid(currentVersion) === null) {
+    console.error(`The version '${currentVersion}' is not a valid semver string`)
+    return false
+  }
 
-  if (currentVersion !== expectedPatchVersion) {
-    console.error(`version ${currentVersion} is not the latest available patch version on git.`)
+  const sanitizedCurrentVersion = semver.clean(currentVersion)
+  const expectedPatchVersion = semver.maxSatisfying(versions, `${semver.major(sanitizedCurrentVersion)}.${semver.minor(sanitizedCurrentVersion)}.*`)
+  const nextMinorVersion = semver.inc(sanitizedCurrentVersion, 'minor')
+  const nextMajorVersion = semver.inc(sanitizedCurrentVersion, 'major')
+
+  if (sanitizedCurrentVersion !== expectedPatchVersion) {
+    console.error(`It's not allowed to create a maintenance branch based on ${sanitizedCurrentVersion}`)
+    if (expectedPatchVersion != null) {
+      console.error(`${expectedPatchVersion} would be allowed, because it's the latest patch`)
+    }
     return false
   }
 
   if (!versions.includes(nextMinorVersion) && !versions.includes(nextMajorVersion)) {
-    console.error(`version ${currentVersion} must have a minor or major successor version on git.`)
+    console.error(`It's not allowed to create a maintenance branch when there is no minor or major successor version`)
+    console.error(`${sanitizedCurrentVersion} is allowed as soon as ${nextMinorVersion} or ${nextMajorVersion} exist`)
     return false
   }
   return true
