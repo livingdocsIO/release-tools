@@ -21,5 +21,8 @@
   "homepage": "https://github.com/upfrontIO/release-managers#readme",
   "devDependencies": {
     "semantic-release": "^7.0.2"
+  },
+  "release": {
+    "verifyConditions": "@semantic-release/condition-travis"
   }
 }
