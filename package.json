@@ -1,21 +1,25 @@
 {
   "name": "@livingdocs/release-tools",
-  "version": "0.3.0",
+  "version": "0.0.0-development",
   "description": "CLI tools for handling a release on git/github",
   "main": "index.js",
   "bin": {
     "li-release": "./li-release"
   },
   "scripts": {
-    "test": "./tests/index.sh"
+    "test": "./tests/index.sh",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/upfrontIO/release-managers.git"
+    "url": "https://github.com/upfrontIO/release-managers.git"
   },
   "author": "livingdocs",
   "bugs": {
     "url": "https://github.com/upfrontIO/release-managers/issues"
   },
-  "homepage": "https://github.com/upfrontIO/release-managers#readme"
+  "homepage": "https://github.com/upfrontIO/release-managers#readme",
+  "devDependencies": {
+    "semantic-release": "^7.0.2"
+  }
 }
