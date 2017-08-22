@@ -71,7 +71,6 @@ hasPackageJson () {
   fi
 }
 
-# Does the branch to create already exist?
 hasMaintenanceBranch () {
   if ! [ -z "$(git branch -a | grep $MAINTENANCE_BRANCH)" ]; then
     redLog "ERR: Branch $MAINTENANCE_BRANCH already exists locally or remote."
@@ -88,7 +87,7 @@ hasUncommitedChanges () {
 }
 
 initializeMasterBranch () {
-  yellowLog "Initialize the most recent master branch"
+  log "Initialize the most recent master branch"
   executeAndLog "git fetch --all"
   executeAndLog "git checkout master"
   executeAndLog "git reset --hard HEAD"
@@ -97,6 +96,7 @@ initializeMasterBranch () {
 }
 
 createMaintenanceBranch () {
+  log "Create branch $MAINTENANCE_BRANCH based on $BASE_TAG"
   executeAndLog "node $currentDir/../js/can_create_release.js $BASE_TAG"
   executeAndLog "git checkout $BASE_TAG"
   executeAndLog "git checkout -b $MAINTENANCE_BRANCH"
@@ -108,6 +108,7 @@ createMaintenanceBranch () {
 # As you're releasing an old version, set publishConfig.tag to prevent a release of the `latest` dist-tag
 # Both steps are required to not mess up other customers installations
 updatePackage () {
+  log "Update package.json with semantic-release information"
   executeAndLog "cat package.json
              | jq \".release.branch=\\\"$MAINTENANCE_BRANCH\\\" | .publishConfig.tag=\\\"$MAINTENANCE_TAG\\\"\"
              | cat > package.json.tmp && mv package.json.tmp package.json"
@@ -117,6 +118,7 @@ updatePackage () {
 # Make sure you have a write access token, or you'll get a 404
 # e.g. npm dist-tag add @livingdocs/editor@v7.3.4 maintenance-v7.3.4
 addNPMDistTag () {
+  log "Add tag $MAINTENANCE_TAG to npm package version $npmPackageName@$BASE_TAG"
   npmPackageName=$(node -e 'console.log(require("./package.json").name)')
   command="npm dist-tag add $npmPackageName@$BASE_TAG $MAINTENANCE_TAG --//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN"
   message="npm dist-tag add $npmPackageName@$BASE_TAG $MAINTENANCE_TAG --//registry.npmjs.org/:_authToken=****"
@@ -124,8 +126,8 @@ addNPMDistTag () {
   execute $command
 }
 
-# Push maintenance branch to github
 pushToGithub () {
+  log "Push branch $MAINTENANCE_BRANCH to github"
   executeAndLog "git add package.json;
              git commit -m \"chore: Setup up maintenance branch $MAINTENANCE_BRANCH\";
              git push origin $MAINTENANCE_BRANCH"
@@ -154,9 +156,6 @@ hasPackageJson
 hasMaintenanceBranch
 hasUncommitedChanges
 initializeMasterBranch
-
-exit 1
-
 createMaintenanceBranch
 updatePackage
 addNPMDistTag
