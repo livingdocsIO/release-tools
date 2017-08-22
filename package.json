@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/upfrontIO/release-managers#readme",
   "devDependencies": {
+    "@semantic-release/condition-travis": "^5.0.1",
     "semantic-release": "^7.0.2"
   },
   "release": {
