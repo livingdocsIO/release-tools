@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "./tests/index.sh",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "./bin/semantic-release.sh"
   },
   "repository": {
     "type": "git",
