@@ -19,6 +19,7 @@ Execute `li-release` on the command line and you will see all available commands
 npm test
 ```
 
+
 ## Copyright
 
 Copyright (c) 2017 Livingdocs AG, all rights reserved
