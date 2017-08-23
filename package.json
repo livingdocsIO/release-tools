@@ -12,13 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/upfrontIO/release-managers.git"
+    "url": "https://github.com/upfrontIO/release-tools.git"
   },
   "author": "livingdocs",
   "bugs": {
-    "url": "https://github.com/upfrontIO/release-managers/issues"
+    "url": "https://github.com/upfrontIO/release-tools/issues"
   },
-  "homepage": "https://github.com/upfrontIO/release-managers#readme",
+  "homepage": "https://github.com/upfrontIO/release-tools#readme",
   "devDependencies": {
     "@semantic-release/condition-travis": "^5.0.1",
     "semantic-release": "^7.0.2",
