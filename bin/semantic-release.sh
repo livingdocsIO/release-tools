@@ -3,13 +3,11 @@
 set -e
 
 # Set new version
-if [[ $TRAVIS_PULL_REQUEST =~ false ]]; then
-  if [[ $TRAVIS_BRANCH =~ ^maintenance- ]]; then
-    # only allow patch releases in a maintenance branch
-    semantic-release pre --verify-release="./js/semantic-release/verifyPatchRelease.js"
-  else
-    semantic-release pre
-  fi
+if [[ $TRAVIS_BRANCH =~ ^maintenance- ]]; then
+  # only allow patch releases in a maintenance branch
+  semantic-release pre --verify-release="./node_modules/semantic-release-verify-patch"
+else
+  semantic-release pre
 fi
 
 # Remove all devDeps so shrinkwrap does not pick them up.
