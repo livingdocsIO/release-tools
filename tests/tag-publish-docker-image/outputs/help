@@ -12,7 +12,7 @@ You MUST define the following environment variables
 You COULD define the following environment variables
 Based on this variables the script decides how to tag images.
 ------------------------------------------------------------------------------------------------------
-<PULL_REQUEST_NUMBER>      example: '77' or ''
+<PULL_REQUEST_BRANCH>      example: 'my-feature' or ''
 <BRANCH_NAME>              example: 'my-branch'                  Branch name or referenced branch name of a pull request
 <COMMIT_SHA>               example: '194760449bbca8e13d07013727f4e81d2e5ee81b'
 <COMMIT_TAG>               example: 'v4.2.0'
