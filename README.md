@@ -1,5 +1,7 @@
 # Release Tools
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/upfrontIO/release-tools.svg)](https://greenkeeper.io/)
+
 The release tools are a bunch of command line tools to maintain a release. Usually this tools are used by a release manager.
 
 ## Usage
