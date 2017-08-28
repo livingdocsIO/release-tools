@@ -44,7 +44,8 @@ COMMIT_TAG= \
 assertTest $?
 
 yellowLog "Test tagging for a master branch named false [REGRESSION BUG]"
-echo "It happened when we passed TRAVIS_PULL_REQUEST instead of TRAVIS_PULL_REQUEST_BRANCH. TRAVIS_PULL_REQUEST is false when there is no pull request."
+echo "It happened when we passed TRAVIS_PULL_REQUEST instead of TRAVIS_PULL_REQUEST_BRANCH."
+echo "TRAVIS_PULL_REQUEST is false when there is no pull request."
 DOCKER_USERNAME=dev@li.io \
 DOCKER_PASSWORD=1234567 \
 REMOTE_IMAGE_NAME=livingdocs/service-server \
@@ -93,7 +94,7 @@ BRANCH_NAME=release-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
 ./bin/tag-publish-docker-image --dry-run 2>&1 \
-  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag-release-branch-open-pr
 assertTest $?
 
 yellowLog "Test tagging for a random branch"
@@ -106,7 +107,7 @@ BRANCH_NAME=random-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
 ./bin/tag-publish-docker-image --dry-run 2>&1 \
-  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag-random-branch
 assertTest $?
 
 yellowLog "Test tagging for a random branch with an open pull request"
@@ -119,5 +120,5 @@ BRANCH_NAME=random-7 \
 COMMIT_SHA=rea0a2f \
 COMMIT_TAG= \
 ./bin/tag-publish-docker-image --dry-run 2>&1 \
-  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag
+  | $currentDir/stripcolorcodes | diff - tests/tag-publish-docker-image/outputs/no-image-to-tag-random-branch-open-pr
 assertTest $?

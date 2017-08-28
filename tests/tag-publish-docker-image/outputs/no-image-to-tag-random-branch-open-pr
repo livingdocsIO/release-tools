@@ -6,7 +6,7 @@ tag and push docker images
   ---------------------------------------------------
   REMOTE_IMAGE_NAME=livingdocs/service-server
   LOCAL_IMAGE_NAME_AND_TAG=server:test
-  BRANCH_NAME=release-7
+  BRANCH_NAME=random-7
   PULL_REQUEST_BRANCH=myfeat
   COMMIT_SHA=rea0a2f
   COMMIT_TAG=

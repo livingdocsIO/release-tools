@@ -6,13 +6,11 @@ tag and push docker images
   ---------------------------------------------------
   REMOTE_IMAGE_NAME=livingdocs/service-server
   LOCAL_IMAGE_NAME_AND_TAG=server:test
-  BRANCH_NAME=master
+  BRANCH_NAME=random-7
   PULL_REQUEST_BRANCH=
-  COMMIT_SHA=ma0a2fd
+  COMMIT_SHA=rea0a2f
   COMMIT_TAG=
   ---------------------------------------------------
-  Add tags (sha-tag) Add sha-tag to docker image based on the master branch.
-  Executing: docker login -u=**** -p=****
-  Executing: docker tag server:test livingdocs/service-server:sha-ma0a2fd
-  Executing: docker push livingdocs/service-server:sha-ma0a2fd
-sha-ma0a2fd
+  No tagging scenario has been applied based on the passed arguments.
+  Abort operation.
+

@@ -107,6 +107,17 @@ fi
 
 yellowLog "tag and push docker images"
 
+log "  ---------------------------------------------------"
+log "  Available environment variables"
+log "  ---------------------------------------------------"
+log "  REMOTE_IMAGE_NAME=${REMOTE_IMAGE_NAME}"
+log "  LOCAL_IMAGE_NAME_AND_TAG=${LOCAL_IMAGE_NAME_AND_TAG}"
+log "  BRANCH_NAME=${BRANCH_NAME}"
+log "  PULL_REQUEST_BRANCH=${PULL_REQUEST_BRANCH}"
+log "  COMMIT_SHA=${COMMIT_SHA}"
+log "  COMMIT_TAG=${COMMIT_TAG}"
+log "  ---------------------------------------------------"
+
 prepareTags
 
 if isFeatureBranch; then
@@ -142,7 +153,8 @@ if hasDockerTags; then
     dockerPush $DOCKER_REMOTE_IMAGE
   done
 else
-  log "  No tagging scenario has been applied based on the passed arguments. Abort operation."
+  log "  No tagging scenario has been applied based on the passed arguments."
+  log "  Abort operation."
 fi
 
 # use the return value in stdout
