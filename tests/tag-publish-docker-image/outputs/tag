@@ -1,6 +1,16 @@
 
 tag and push docker images
 
+  ---------------------------------------------------
+  Available environment variables
+  ---------------------------------------------------
+  REMOTE_IMAGE_NAME=livingdocs/service-server
+  LOCAL_IMAGE_NAME_AND_TAG=server:test
+  BRANCH_NAME=
+  PULL_REQUEST_BRANCH=
+  COMMIT_SHA=rea0a2f
+  COMMIT_TAG=v4.2.0
+  ---------------------------------------------------
   Add tags (sha-tag / tag) to docker image based on a tag.
   Executing: docker login -u=**** -p=****
   Executing: docker tag server:test livingdocs/service-server:sha-rea0a2f

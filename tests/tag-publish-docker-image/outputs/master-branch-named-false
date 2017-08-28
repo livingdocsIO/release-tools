@@ -7,14 +7,14 @@ tag and push docker images
   REMOTE_IMAGE_NAME=livingdocs/service-server
   LOCAL_IMAGE_NAME_AND_TAG=server:test
   BRANCH_NAME=master
-  PULL_REQUEST_BRANCH=myfeat
-  COMMIT_SHA=fea0a2f
+  PULL_REQUEST_BRANCH=false
+  COMMIT_SHA=ma0a2fd
   COMMIT_TAG=
   ---------------------------------------------------
   Add tags (sha-tag / feature-tag) to docker image based on a feature branch.
   Executing: docker login -u=**** -p=****
-  Executing: docker tag server:test livingdocs/service-server:sha-fea0a2f
-  Executing: docker push livingdocs/service-server:sha-fea0a2f
-  Executing: docker tag server:test livingdocs/service-server:feature-myfeat-sha-fea0a2f
-  Executing: docker push livingdocs/service-server:feature-myfeat-sha-fea0a2f
-feature-myfeat-sha-fea0a2f
+  Executing: docker tag server:test livingdocs/service-server:sha-ma0a2fd
+  Executing: docker push livingdocs/service-server:sha-ma0a2fd
+  Executing: docker tag server:test livingdocs/service-server:feature-false-sha-ma0a2fd
+  Executing: docker push livingdocs/service-server:feature-false-sha-ma0a2fd
+feature-false-sha-ma0a2fd
