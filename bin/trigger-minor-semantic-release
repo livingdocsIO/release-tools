@@ -1,0 +1,66 @@
+#!/bin/bash
+set -e
+
+# require helper
+currentDir=$(node -e "console.log(require('path').dirname(require('fs').realpathSync('$BASH_SOURCE')))")
+source $currentDir/helper
+
+
+version=$1
+hasVersion=$(git tag -l "$version" | wc -l | tr -d '[:space:]')
+
+
+# Help messages
+if [ "x$1" = "x" ]; then
+  yellowLog "This script will create and push a branch with a feat commit."
+  yellowLog "Argument 1 (MUST)     : <version> to create f.e. v10.0.0"
+  exit 1
+fi
+
+
+# Does the version already exists?
+if [[ "$hasVersion" == "1" ]]; then
+  yellowLog "ERR: The version $version already exists."
+  exit 1
+fi
+
+
+# Does the branch to create already exist?
+if [ $(git branch -a | grep "bump-$version") ]; then
+  yellowLog "ERR: Branch bump-$version already exists."
+  exit 1
+fi
+
+
+# Are there uncommited changes?
+hasUncommitedChanges=$(git diff)
+if [[ $hasUncommitedChanges ]]; then
+  yellowLog "ERR: You have uncommited changes."
+  exit 1
+fi
+
+
+yellowLog "Initialize the most recent master branch"
+git fetch --all
+git checkout master
+git reset --hard HEAD
+git pull --rebase origin master
+git reset --hard origin/master
+
+
+yellowLog "Create a new branch bump-$version"
+git checkout -b "bump-$version"
+
+
+yellowLog "Create an empty commit in the branch bump-$version"
+git commit --allow-empty -m "feat: bump minor version to $version for release management"
+
+yellowLog "Push the branch bump-$version"
+git push origin "bump-$version"
+
+
+yellowLog "Delete the local release branch bump-$version"
+git checkout master
+git branch -D "bump-$version"
+
+yellowLog "trigger-minor-semantic-release has been executed successfully"
