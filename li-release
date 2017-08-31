@@ -15,7 +15,7 @@ help () {
   >&2 echo "  helper commands:"
   >&2 echo "   upgrade-rancher-container:       Upgrade the image of a rancher service"
   >&2 echo "   tag-publish-docker-image:        Tag and publish docker image"
-  >&2 echo "   trigger-minor-semantic-release:  Create and push a branch with a feat commit."
+  >&2 echo "   push-feat-commit:  Create and push a branch with a feat commit."
   >&2 echo ""
   exit 1
 }
@@ -41,8 +41,8 @@ case "$cmd" in
     tag-and-deploy-docker-image)
         $currentDir/bin/tag-and-deploy-docker-image $*
         ;;
-    trigger-minor-semantic-release)
-        $currentDir/bin/trigger-minor-semantic-release $*
+    push-feat-commit)
+        $currentDir/bin/push-feat-commit $*
         ;;
     *)
         help

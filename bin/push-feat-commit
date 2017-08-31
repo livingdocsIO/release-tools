@@ -63,4 +63,4 @@ yellowLog "Delete the local release branch bump-$version"
 git checkout master
 git branch -D "bump-$version"
 
-yellowLog "trigger-minor-semantic-release has been executed successfully"
+yellowLog "push-feat-commit has been executed successfully"
