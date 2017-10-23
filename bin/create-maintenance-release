@@ -72,8 +72,8 @@ hasPackageJson () {
 }
 
 hasMaintenanceBranch () {
-  if ! [ -z "$(git branch -a | grep $MAINTENANCE_BRANCH)" ]; then
-    redLog "ERR: Branch $MAINTENANCE_BRANCH already exists locally or remote."
+  if ! [ -z "$(git branch -a | grep -w $MAINTENANCE_BRANCH)" ]; then
+    redLog "ERR: A branch named $MAINTENANCE_BRANCH already exists locally or remotely."
     exit 1
   fi
 }
