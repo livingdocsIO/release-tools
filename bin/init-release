@@ -35,7 +35,7 @@ fi
 
 
 # Does the branch to create already exist?
-if [ $(git branch -a | grep "release-$releaseVersion") ]; then
+if [ $(git branch -a | grep -w "release-$releaseVersion") ]; then
    yellowLog "ERR: Branch release-$releaseVersion already exists."
    exit 1
 fi

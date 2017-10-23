@@ -2,11 +2,13 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/upfrontIO/release-tools.svg)](https://greenkeeper.io/)
 
-The release tools are a bunch of command line tools to maintain a release. Usually this tools are used by a release manager.
+The release tools are a bunch of command line tools to maintain a release. These tools are usually used by a release manager.
 
 ## Usage
 
-Execute `li-release` on the command line and you will see all available commands. Every command has a help function as soon as you execute them without arguments, e.g. `li-release init-release`.
+These utilities are provided by this [NPM package](https://www.npmjs.com/package/@livingdocs/release-tools).
+
+After adding it as dev-dependency to the NPM package you are working on, you will be able to execute `li-release` on the command line to see all available commands. Every command shows some help about a function executed without arguments, e.g. `li-release init-release`.
 
 
 
