@@ -10,7 +10,7 @@ help () {
   >&2 echo "   tag-and-deploy-docker-image:     Tag, publish and deploy docker image to rancher"
   >&2 echo ""
   >&2 echo "  commands for a core release (f.e. livingdocs-server):"
-  >&2 echo "   create-maintenance-release:      Creates a maintenance release branch to maintain older versions"
+  >&2 echo "   create-release-branch:           Creates a release branch to support older versions"
   >&2 echo ""
   >&2 echo "  helper commands:"
   >&2 echo "   upgrade-rancher-container:       Upgrade the image of a rancher service"
@@ -32,8 +32,8 @@ case "$cmd" in
     finish-release)
         $currentDir/bin/finish-release $*
         ;;
-    create-maintenance-release)
-        $currentDir/bin/create-maintenance-release $*
+    create-release-branch)
+        $currentDir/bin/create-release-branch $*
         ;;
     tag-publish-docker-image)
         $currentDir/bin/tag-publish-docker-image $*

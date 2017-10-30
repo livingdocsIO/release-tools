@@ -8,15 +8,16 @@ source $currentDir/helper
 
 help () {
   log ""
-  log "This script creates a maintenance release (for the upstream e.g. livingdocs-editor / livingdocs-server."
+  log "This script creates a release branch (for the upstream e.g. livingdocs-editor / livingdocs-server."
   log ""
   log "-----------------------------------------------------------------------------------------------------------------------"
   log "Parameters"
   log "-----------------------------------------------------------------------------------------------------------------------"
-  log "--help / -h               Show help"
-  log "--base-tag                Base tag where the maintenance branch will be branched from e.g. '--base-tag v55.0.0'"
-  log "--npm-auth-token          npm-auth-token with write access e.g. '--npm-auth-token 11111111-2222-3333-4444-555555555555'"
-  log "--dry-run                 No execution of the script (just logs) '--dry-run true' (default: false)"
+  log "--help / -h                 Show help"
+  log "--base-tag                  Base tag where the release branch will be branched from e.g. '--base-tag v55.0.0'"
+  log "--release-branch-name       Name of the release branch e.g. '--release-branch-name release-2017-10'"
+  log "--npm-auth-token            npm-auth-token with write access e.g. '--npm-auth-token 11111111-2222-3333-4444-555555555555'"
+  log "--dry-run                   No execution of the script (just logs) '--dry-run true' (default: false)"
   log ""
   exit 1
 }
@@ -31,6 +32,10 @@ assignCLIParameters () {
     case $key in
         --base-tag)
           export BASE_TAG="$2"
+          shift
+        ;;
+        --release-branch-name)
+          export RELEASE_BRANCH_NAME="$2"
           shift
         ;;
         --npm-auth-token)
@@ -72,8 +77,8 @@ hasPackageJson () {
 }
 
 hasMaintenanceBranch () {
-  if ! [ -z "$(git branch -a | grep -w $MAINTENANCE_BRANCH)" ]; then
-    redLog "ERR: A branch named $MAINTENANCE_BRANCH already exists locally or remotely."
+  if ! [ -z "$(git branch -a | grep -w $RELEASE_BRANCH_NAME)" ]; then
+    redLog "ERR: A branch named $RELEASE_BRANCH_NAME already exists locally or remotely."
     exit 1
   fi
 }
@@ -96,10 +101,10 @@ initializeMasterBranch () {
 }
 
 createMaintenanceBranch () {
-  log "Create branch $MAINTENANCE_BRANCH based on $BASE_TAG"
+  log "Create branch $RELEASE_BRANCH_NAME based on $BASE_TAG"
   executeAndLog "node $currentDir/../js/can_create_release.js $BASE_TAG"
   executeAndLog "git checkout $BASE_TAG"
-  executeAndLog "git checkout -b $MAINTENANCE_BRANCH"
+  executeAndLog "git checkout -b $RELEASE_BRANCH_NAME"
 }
 
 # semantic-release only runs on master by default.
@@ -110,7 +115,7 @@ createMaintenanceBranch () {
 updatePackage () {
   log "Update package.json with semantic-release information"
   executeAndLog "cat package.json
-             | jq \".release.branch=\\\"$MAINTENANCE_BRANCH\\\" | .publishConfig.tag=\\\"$MAINTENANCE_TAG\\\"\"
+             | jq \".release.branch=\\\"$RELEASE_BRANCH_NAME\\\" | .publishConfig.tag=\\\"$RELEASE_TAG\\\"\"
              | cat > package.json.tmp && mv package.json.tmp package.json"
 }
 
@@ -118,19 +123,19 @@ updatePackage () {
 # Make sure you have a write access token, or you'll get a 404
 # e.g. npm dist-tag add @livingdocs/editor@v7.3.4 maintenance-v7.3.4
 addNPMDistTag () {
-  log "Add tag $MAINTENANCE_TAG to npm package version $npmPackageName@$BASE_TAG"
+  log "Add tag $RELEASE_TAG to npm package version $npmPackageName@$BASE_TAG"
   npmPackageName=$(node -e 'console.log(require("./package.json").name)')
-  command="npm dist-tag add $npmPackageName@$BASE_TAG $MAINTENANCE_TAG --//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN"
-  message="npm dist-tag add $npmPackageName@$BASE_TAG $MAINTENANCE_TAG --//registry.npmjs.org/:_authToken=****"
+  command="npm dist-tag add $npmPackageName@$BASE_TAG $RELEASE_TAG --//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN"
+  message="npm dist-tag add $npmPackageName@$BASE_TAG $RELEASE_TAG --//registry.npmjs.org/:_authToken=****"
   log "  Executing: $message"
   execute $command
 }
 
 pushToGithub () {
-  log "Push branch $MAINTENANCE_BRANCH to github"
+  log "Push branch $RELEASE_BRANCH_NAME to github"
   executeAndLog "git add package.json;
-             git commit -m \"chore: Setup up maintenance branch $MAINTENANCE_BRANCH\";
-             git push origin $MAINTENANCE_BRANCH"
+             git commit -m \"chore: Setup up maintenance branch $RELEASE_BRANCH_NAME\";
+             git push origin $RELEASE_BRANCH_NAME"
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VARIABLES
@@ -146,10 +151,11 @@ assignCLIParameters $@
 
 # Mandatory parameters
 [[ -z "$BASE_TAG" ]] && help
+[[ -z "$RELEASE_BRANCH_NAME" ]] && help
 [[ -z "$NPM_AUTH_TOKEN" ]] && help
 
-export MAINTENANCE_BRANCH="maintenance-$(echo $BASE_TAG | cut -d '.' -f1 -f2).x"
-export MAINTENANCE_TAG=$MAINTENANCE_BRANCH
+# e.g. RELEASE_TAG=release-v7.3.4
+export RELEASE_TAG="release-$(echo $BASE_TAG | cut -d '.' -f1 -f2).x"
 
 yellowLog "Setup the maintenance branch $BASE_TAG"
 hasPackageJson
