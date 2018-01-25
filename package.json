@@ -21,7 +21,7 @@
   "homepage": "https://github.com/upfrontIO/release-tools#readme",
   "devDependencies": {
     "@semantic-release/condition-travis": "^6.0.0",
-    "semantic-release": "^7.0.2",
+    "semantic-release": "^12.2.5",
     "semantic-release-verify-patch": "^1.1.0",
     "semver": "^5.3.0",
     "tap-spec": "^4.1.1",
