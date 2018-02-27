@@ -39,7 +39,7 @@ if [ "x$localBranchExists" != "x" ]; then
 fi
 
 # Stop if there is no remote release branch
-remoteBranchExists=$(git branch -r | { grep -w "release-$releaseVersion" || true; })
+remoteBranchExists=$(git branch -r | { grep /release-$releaseVersion$ || true; })
 if [ "x$remoteBranchExists" = "x" ]; then
   yellowLog "ERR: There is no remote branch release-$releaseVersion.
     Please execute 'init-release' first"
