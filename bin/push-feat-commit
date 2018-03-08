@@ -26,7 +26,7 @@ fi
 
 
 # Does the branch to create already exist?
-if [ $(git branch -a | grep -w "bump-$version") ]; then
+if [ $(git branch -a | grep /bump-$version$) ]; then
   yellowLog "ERR: Branch bump-$version already exists."
   exit 1
 fi
