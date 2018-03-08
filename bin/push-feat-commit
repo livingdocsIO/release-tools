@@ -52,8 +52,10 @@ yellowLog "Create a new branch bump-$version"
 git checkout -b "bump-$version"
 
 
-yellowLog "Create an empty commit in the branch bump-$version"
-git commit --allow-empty -m "feat: bump minor version to $version for release management"
+yellowLog "Add an empty line to readme.md to prepare a version bump in the branch bump-$version"
+echo '' >> readme.md
+git add readme.md
+git commit -m "feat: bump minor version to $version for release management"
 
 yellowLog "Push the branch bump-$version"
 git push origin "bump-$version"
