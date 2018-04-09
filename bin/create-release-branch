@@ -92,6 +92,7 @@ hasUncommitedChanges () {
 }
 
 initializeMasterBranch () {
+  yellowLog "initializeMasterBranch"
   log "Initialize the most recent master branch"
   executeAndLog "git fetch --all"
   executeAndLog "git checkout master"
@@ -101,6 +102,7 @@ initializeMasterBranch () {
 }
 
 createMaintenanceBranch () {
+  yellowLog "createMaintenanceBranch"
   log "Create branch $RELEASE_BRANCH_NAME based on $BASE_TAG"
   executeAndLog "node $currentDir/../js/can_create_release.js $BASE_TAG"
   executeAndLog "git checkout $BASE_TAG"
@@ -113,16 +115,33 @@ createMaintenanceBranch () {
 # As you're releasing an old version, set publishConfig.tag to prevent a release of the `latest` dist-tag
 # Both steps are required to not mess up other customers installations
 updatePackage () {
+  yellowLog "updatePackage"
   log "Update package.json with semantic-release information"
   executeAndLog "cat package.json
              | jq \".release.branch=\\\"$RELEASE_BRANCH_NAME\\\" | .publishConfig.tag=\\\"$RELEASE_TAG\\\"\"
              | cat > package.json.tmp && mv package.json.tmp package.json"
+
+}
+
+isNpmPublishDisabled () {
+  isNpmPublishSet=$(cat package.json | jq '.release.npmPublish')
+  if [ "$isNpmPublishSet" = false ]; then
+    echo true
+    return
+  fi
+  echo false
 }
 
 # Pass the auth token you generated above in the following command.
 # Make sure you have a write access token, or you'll get a 404
 # e.g. npm dist-tag add @livingdocs/editor@v7.3.4 maintenance-v7.3.4
 addNPMDistTag () {
+  yellowLog "addNPMDistTag"
+  if $(isNpmPublishDisabled) = true; then
+    log "Skip publish to npm, because 'release.npmPublish=false' in package.json"
+    return
+  fi
+
   log "Add tag $RELEASE_TAG to npm package version $npmPackageName@$BASE_TAG"
   npmPackageName=$(node -e 'console.log(require("./package.json").name)')
   command="npm dist-tag add $npmPackageName@$BASE_TAG $RELEASE_TAG --//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN"
@@ -132,6 +151,7 @@ addNPMDistTag () {
 }
 
 pushToGithub () {
+  yellowLog "pushToGithub"
   log "Push branch $RELEASE_BRANCH_NAME to github"
   executeAndLog "git add package.json;
              git commit -m \"chore: Setup up maintenance branch $RELEASE_BRANCH_NAME\";
@@ -152,7 +172,7 @@ assignCLIParameters $@
 # Mandatory parameters
 [[ -z "$BASE_TAG" ]] && help
 [[ -z "$RELEASE_BRANCH_NAME" ]] && help
-[[ -z "$NPM_AUTH_TOKEN" ]] && help
+if [ $(isNpmPublishDisabled) = false ]; then [[ -z "$NPM_AUTH_TOKEN" ]] && help; fi;
 
 # e.g. RELEASE_TAG=release-v7.3.4
 export RELEASE_TAG="release-$(echo $BASE_TAG | cut -d '.' -f1 -f2).x"
