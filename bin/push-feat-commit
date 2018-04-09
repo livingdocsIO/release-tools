@@ -52,9 +52,11 @@ yellowLog "Create a new branch bump-$version"
 git checkout -b "bump-$version"
 
 
-yellowLog "Add an empty line to readme.md to prepare a version bump in the branch bump-$version"
-echo '' >> readme.md
-git add readme.md
+yellowLog "Add an empty line to README.md to prepare a version bump in the branch bump-$version"
+# searches case insensitive for readme.md and renames it to README.md
+mv ./readme.md ./README.md
+echo '' >> README.md
+git add README.md
 git commit -m "feat: bump minor version to $version for release management"
 
 yellowLog "Push the branch bump-$version"
