@@ -19,8 +19,8 @@ Have [`npx`](https://www.npmjs.com/package/npx) installed with `npm install -g n
 When you want to manage a product with different releases and support old version with patches, you can not just use semver on master. You also have to work with release branches to support old versions. A more detailed explanation with an example can be found [here](./doc/how-to-handle-a-product-release-on-github.md)
 
 **Commands**
-* Help: `npx release-tools create-release-branch`
-* Command (simple example): `npx release-tools create-release-branch --base-tag=v1.0.1 --release-branch-name=release-2017-10 --npm-token=<token>`
+* Help: `npx @livingdocs/release-tools@<version> create-release-branch`
+* Command (simple example): `npx @livingdocs/release-tools@<version> create-release-branch --base-tag=v1.0.1 --release-branch-name=release-2017-10 --npm-token=<token>`
 
 
 ## Examples
