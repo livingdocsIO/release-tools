@@ -1,4 +1,4 @@
-const semver = require("semver")
+const semver = require('semver')
 const exec = require('child_process').exec
 
 module.exports = {
