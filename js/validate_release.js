@@ -1,9 +1,10 @@
-const semver = require("semver")
+const semver = require('semver')
 const exec = require('child_process').exec
 
 module.exports = {
   listGitTags,
-  patch
+  patch,
+  nextMinor
 }
 
 function patch (currentVersion, versions) {
@@ -31,6 +32,16 @@ function patch (currentVersion, versions) {
     return false
   }
   return true
+}
+
+function nextMinor (version, versions) {
+  if (semver.valid(version) === null) {
+    console.error(`The version '${version}' is not a valid semver string`)
+    return false
+  }
+
+  const sanitizedCurrentVersion = semver.clean(version)
+  return semver.inc(sanitizedCurrentVersion, 'minor')
 }
 
 function listGitTags (callback) {
