@@ -13,13 +13,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/upfrontIO/release-tools.git"
+    "url": "https://github.com/livingdocsIO/release-tools.git"
   },
   "author": "livingdocs",
   "bugs": {
-    "url": "https://github.com/upfrontIO/release-tools/issues"
+    "url": "https://github.com/livingdocsIO/release-tools/issues"
   },
-  "homepage": "https://github.com/upfrontIO/release-tools#readme",
+  "homepage": "https://github.com/livingdocsIO/release-tools#readme",
   "dependencies": {
     "camelcase": "^5.0.0",
     "chalk": "^2.3.2",
