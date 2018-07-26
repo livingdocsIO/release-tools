@@ -75,6 +75,6 @@ git branch -D "bump-$version"
 
 yellowLog "Create bump pull request"
 repositoryName=$(basename $(git remote show -n origin | grep Fetch | cut -d: -f2-) | cut -d "." -f 1)
-GH_BUMP_TO=$version GH_REPO_NAME=$repositoryName GH_TOKEN=3b5741585b11de7a65824161161a02047167feb9 npx https://gist.github.com/DaRaFF/0faf9df4f2b4a7c8c392a140963e0443
+GH_BUMP_TO=$version GH_REPO_NAME=$repositoryName GH_TOKEN=$token npx https://gist.github.com/DaRaFF/0faf9df4f2b4a7c8c392a140963e0443
 
 yellowLog "push-feat-commit has been executed successfully"
