@@ -7,15 +7,21 @@ source $currentDir/helper
 
 
 version=$1
+token=$2
 hasVersion=$(git tag -l "$version" | wc -l | tr -d '[:space:]')
 
 
 # Help messages
-if [ "x$1" = "x" ]; then
+help () {
   yellowLog "This script will create and push a branch with a feat commit."
   yellowLog "Argument 1 (MUST)     : <version> to create f.e. v10.0.0"
+  yellowLog "Argument 2 (MUST)     : <github token> e.g. 11FF22FF33"
   exit 1
-fi
+}
+
+# Mandatory variables
+[[ -z "$version" ]] && help
+[[ -z "$token" ]] && help
 
 
 # Does the version already exist?
@@ -66,5 +72,9 @@ git push origin "bump-$version"
 yellowLog "Delete the local release branch bump-$version"
 git checkout master
 git branch -D "bump-$version"
+
+yellowLog "Create bump pull request"
+repositoryName=$(basename $(git remote show -n origin | grep Fetch | cut -d: -f2-) | cut -d "." -f 1)
+GH_BUMP_TO=$version GH_REPO_NAME=$repositoryName GH_TOKEN=3b5741585b11de7a65824161161a02047167feb9 npx https://gist.github.com/DaRaFF/0faf9df4f2b4a7c8c392a140963e0443
 
 yellowLog "push-feat-commit has been executed successfully"
