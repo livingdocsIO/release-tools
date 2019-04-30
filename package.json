@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/livingdocsIO/release-tools#readme",
   "dependencies": {
-    "@octokit/rest": "^16.0.1",
+    "@octokit/rest": "^16.25.1",
     "camelcase": "^5.0.0",
     "chalk": "^2.3.2",
     "require-dir": "^1.0.0",
