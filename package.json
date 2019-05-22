@@ -25,7 +25,7 @@
     "camelcase": "^5.0.0",
     "chalk": "^2.3.2",
     "require-dir": "^1.0.0",
-    "semver": "^5.3.0",
+    "semver": "^6.1.0",
     "shelljs": "^0.8.1",
     "slack-messenger": "git+https://git@github.com/DaRaFF/slack-messenger.git",
     "yargs": "^11.0.0"
