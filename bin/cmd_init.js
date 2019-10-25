@@ -4,7 +4,7 @@ const colors = require('chalk')
 const shell = require('shelljs')
 shell.set('-e')
 const { join, resolve } = require('path')
-const pkg = require(join(__dirname, '../package.json'))
+const pkg = require(join(process.cwd(), '/package.json'))
 
 // External dependencies to pass to the commands
 let dep = {
