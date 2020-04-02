@@ -23,7 +23,7 @@
   "dependencies": {
     "@octokit/rest": "16.2.0",
     "camelcase": "^5.0.0",
-    "chalk": "^2.3.2",
+    "chalk": "^4.0.0",
     "command-exists": "^1.2.8",
     "require-dir": "^1.0.0",
     "semver": "^5.3.0",
