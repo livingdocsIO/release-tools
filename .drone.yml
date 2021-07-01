@@ -1,0 +1,46 @@
+---
+kind: pipeline
+name: test
+
+steps:
+- name: test
+  image: node:16
+  volumes:
+    - name: dockersocket
+      path: /var/run/docker.sock
+  environment:
+    GH_TOKEN:
+      from_secret: GH_TOKEN
+  commands:
+    - npm install
+    - npm run test
+
+volumes:
+- name: dockersocket
+  host:
+    path: /var/run/docker.sock
+
+trigger:
+  event: [push]
+---
+kind: pipeline
+name: tag
+depends_on: [test]
+
+clone:
+  depth: 100
+
+steps:
+- name: release
+  image: livingdocs/semantic-release:v1.0.0
+  environment:
+    GH_TOKEN:
+      from_secret: GH_TOKEN
+
+trigger:
+  event: [push]
+---
+kind: signature
+hmac: 54481a20ed8e3fad5069ae0fd4f0d4395a0500747501830695aefe1c313de66c
+
+...
