@@ -12,6 +12,8 @@ steps:
     GH_TOKEN:
       from_secret: GH_TOKEN
   commands:
+    - apt update
+    - apt-get install jq -y
     - npm install
     - npm run test
 
@@ -36,11 +38,13 @@ steps:
   environment:
     GH_TOKEN:
       from_secret: GH_TOKEN
+    NPM_TOKEN:
+      from_secret: NPM_TOKEN
 
 trigger:
   event: [push]
 ---
 kind: signature
-hmac: 54481a20ed8e3fad5069ae0fd4f0d4395a0500747501830695aefe1c313de66c
+hmac: d74087759aefd2df96640eb4f22348533b5d9e202ae2c667ace01f6f3bdecb5e
 
 ...

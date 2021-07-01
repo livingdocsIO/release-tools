@@ -48,5 +48,8 @@
     "lib": "lib",
     "test": "tests"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "release": {
+    "extends": "@livingdocs/semantic-release-presets/npm-github-verify"
+  }
 }
