@@ -35,8 +35,9 @@ help () {
 }
 
 isReleaseBranch () { [[ $BRANCH_NAME =~ ^release- ]]; }
+isMainBranch () { [[ $BRANCH_NAME == main ]]; }
 isMasterBranch () { [[ $BRANCH_NAME == master ]]; }
-isFeatureBranch () { isMasterBranch && isPullRequest; }
+isFeatureBranch () { (isMasterBranch || isMainBranch) && isPullRequest; }
 isPullRequest () { [[ $PULL_REQUEST_BRANCH != '' ]]; }
 isNotPullRequest () { ! isPullRequest; }
 hasTag () { [[ -n $COMMIT_TAG ]]; }
@@ -126,7 +127,7 @@ if isFeatureBranch; then
   RETURN_VALUE="$FEATURE_TAG"
 fi
 
-if isMasterBranch && isNotPullRequest; then
+if (isMasterBranch || isMainBranch) && isNotPullRequest; then
   log "  Add tags (sha-tag) Add sha-tag to docker image based on the master branch."
   DOCKER_TAGS="$SHA_TAG"
   RETURN_VALUE="$SHA_TAG"

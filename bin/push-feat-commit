@@ -46,12 +46,17 @@ if [[ $hasUncommitedChanges ]]; then
 fi
 
 
-yellowLog "Initialize the most recent master branch"
+yellowLog "Initialize the most recent main branch"
 git fetch --all
-git checkout master
+if git show-ref --verify --quiet refs/heads/main; then
+  BRANCH="main"
+else
+  BRANCH="master"
+fi
+git checkout $BRANCH
 git reset --hard HEAD
-git pull --rebase origin master
-git reset --hard origin/master
+git pull --rebase origin $BRANCH
+git reset --hard origin/$BRANCH
 
 
 yellowLog "Create a new branch bump-$version"
@@ -70,7 +75,7 @@ git push origin "bump-$version"
 
 
 yellowLog "Delete the local release branch bump-$version"
-git checkout master
+git checkout $BRANCH
 git branch -D "bump-$version"
 
 yellowLog "Create bump pull request"
