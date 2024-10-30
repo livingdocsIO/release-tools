@@ -33,6 +33,18 @@ When you want to manage a product with different releases and support old versio
 npm test
 ```
 
+## Test the release tools locally
+Change the directory to a repository you want to test the release tools with (e.g. livingdocs-server), the release tools will be executed in the context of the repository you are in. Both repositories should be in the same parent directory. Then run the following command: 
+```bash
+node ../release-tools/bin/cmd.js create-release-branch \
+  --repo=repoName \
+  --base-tag=validVersion \
+  --release-branch-name=test-release \
+  --npm-token=validNPMToken
+```
+A validVersion is a tag that exists in the repository you are in and fulfils semver constraints:
+- latest version of minor bump (e.g. 1.2.latest)
+- newer minor or major version exist (e.g. 1.3.0 or 2.0.0 exist) 
 
 ## Copyright
 
