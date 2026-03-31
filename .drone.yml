@@ -39,12 +39,12 @@ steps:
     GH_TOKEN:
       from_secret: GH_TOKEN
     NPM_TOKEN:
-      from_secret: NPM_TOKEN
+      from_secret: NPM_TOKEN_PUBLISH
 
 trigger:
   event: [push]
 ---
 kind: signature
-hmac: d74087759aefd2df96640eb4f22348533b5d9e202ae2c667ace01f6f3bdecb5e
+hmac: 5b7087b7c7f704c9069e6e1b3b6b6f3694748e5ca05e3f10656bd18de21ee475
 
 ...
