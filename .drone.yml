@@ -4,7 +4,7 @@ name: test
 
 steps:
 - name: test
-  image: node:16
+  image: node:24
   volumes:
     - name: dockersocket
       path: /var/run/docker.sock
@@ -12,8 +12,7 @@ steps:
     GH_TOKEN:
       from_secret: GH_TOKEN
   commands:
-    - apt update
-    - apt-get install jq -y
+    - apt update && apt-get install -y jq
     - npm install
     - npm run test
 
@@ -34,7 +33,7 @@ clone:
 
 steps:
 - name: release
-  image: livingdocs/semantic-release:v1.0.0
+  image: livingdocs/semantic-release:v3.0.2
   environment:
     GH_TOKEN:
       from_secret: GH_TOKEN
@@ -45,6 +44,6 @@ trigger:
   event: [push]
 ---
 kind: signature
-hmac: 5b7087b7c7f704c9069e6e1b3b6b6f3694748e5ca05e3f10656bd18de21ee475
+hmac: 27778282c8f51ecd2f8654382138d8354a72122a36dd0f9a37092eb385295355
 
 ...
